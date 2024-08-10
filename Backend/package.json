@@ -1,0 +1,18 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "This is for bytesminders",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run dev"
+  },
+  "keywords": [
+    "Om",
+    "Choudhary"
+  ],
+  "author": "om choudhary",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
