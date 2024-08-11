@@ -1,12 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Sidebar = () => {
+const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   return (
-    <div className="w-64 bg-blue-800 text-white flex flex-col">
-      <div className="text-center py-4 text-xl font-bold border-b border-blue-700">Admin Panel</div>
+    <div
+      className={`fixed inset-y-0 left-0 transform ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      } md:relative md:translate-x-0 transition-transform duration-300 ease-in-out w-64 bg-blue-800 text-white flex flex-col z-50`}
+    >
+      <div className="text-center py-4 text-xl font-bold border-b border-blue-700">
+        Admin Panel
+      </div>
       <nav className="flex-grow">
-        <Link to="/certificates-requests" className="block px-4 py-2 hover:bg-blue-700">
+        <Link
+          to="/certificates-requests"
+          className="block px-4 py-2 hover:bg-blue-700"
+          onClick={() => setSidebarOpen(false)}
+        >
           Certificates Requests
         </Link>
       </nav>
@@ -15,6 +25,6 @@ const Sidebar = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Sidebar;
