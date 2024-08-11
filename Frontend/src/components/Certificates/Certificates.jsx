@@ -1,5 +1,6 @@
 import React , {useState} from "react";
 import Popup from "./ClaimCertificates"
+import {Link} from "react-router-dom"
 
 const Certificates = () => {
 
@@ -70,7 +71,10 @@ const Certificates = () => {
         </div>
 
         <div className="mt-4 text-center">
+          <Link to="/">
+          
           <button className="w-full py-2 mt-4 bg-accent rounded-lg text-white">GO BACK</button>
+          </Link>
         </div>
       </div>
       {isPopupOpen && <Popup onClose={closePopup} />}

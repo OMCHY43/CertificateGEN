@@ -1,1 +1,1 @@
-export const DB_NAME = "BytesMinders Certificates" ;
+export const DB_NAME = "BytesMindersCertificates" ;
