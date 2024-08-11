@@ -4,6 +4,7 @@ import axios from "axios"
 import { useState } from 'react';
 import { FaCheck, FaTimes, FaTrash } from 'react-icons/fa';
 
+
 const CertificatesRequests = () => {
   // Sample data
   const [data , setData] = useState([])
@@ -20,9 +21,14 @@ const CertificatesRequests = () => {
     fetchData()
   }, [])
   // Sample functions for handling actions
-  const handleApprove = (id) => {
-    alert(`Approved request with id: ${id}`);
-    // Add your approval logic here
+  const handleApprove = async (id) => {
+    const response = await axios.patch(`http://localhost:5000/api/v1/users/ApproveCertificateRequest/${id}`)
+    console.log(response);
+    if(response){
+      console.log("ok");
+      
+    }
+    
   };
 
   const handleDeny = (id) => {

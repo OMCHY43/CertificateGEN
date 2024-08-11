@@ -2,6 +2,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { FormData } from "../models/CertificatesReq.model.js";
+import fs from "fs";
+import { PDFDocument } from "pdf-lib";
 
 const Register = asyncHandler(async (req, res) => {
   try {
@@ -19,7 +21,7 @@ const Register = asyncHandler(async (req, res) => {
 
     const normalizedEmail = email.trim().toLowerCase();
     const existedRequest = await FormData.findOne({
-      $or : [{ email: normalizedEmail }, { phone }],
+      $or: [{ email: normalizedEmail }, { phone }],
     });
 
     console.log("Existing request found:", existedRequest);
@@ -43,17 +45,18 @@ const Register = asyncHandler(async (req, res) => {
       );
     }
 
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        CreatedData,
-        "Request is submitted. Please come back in 24 hours."
-      )
-    );
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          CreatedData,
+          "Request is submitted. Please come back in 24 hours."
+        )
+      );
   } catch (error) {
     console.error("Error during registration:", error);
-    return res
-      .json(new ApiResponse(500, { error }, "Error on the server"));
+    return res.json(new ApiResponse(500, { error }, "Error on the server"));
   }
 });
 const GetAllReq = asyncHandler(async (req, res) => {
@@ -73,7 +76,6 @@ const GetAllReq = asyncHandler(async (req, res) => {
   }
 });
 
-// Admin approves certificate request
 const ApproveCertificateRequest = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
@@ -86,20 +88,32 @@ const ApproveCertificateRequest = asyncHandler(async (req, res) => {
     FindRequest.CertificatesStatus = "approved";
     await FindRequest.save();
 
-    const Certificates = (await FormData.CertificatesStatus) === "approved";
+    // Load the existing PDF template
+    const existingPDFBytes = fs.readFileSync("public/Certificate.pdf"); // Make sure this path is correct
 
-    if (Certificates) {
-    }
+    const pdfDoc = await PDFDocument.load(existingPDFBytes);
+    const form = pdfDoc.getForm();
 
-    res
-      .status(200)
-      .json(new ApiResponse(200, FindRequest, "Certificate request approved."));
+    // Replace 'NameField' with the actual field name in your PDF
+    const nameField = form.getTextField("NameField");
+    nameField.setText(FindRequest.FullName);
+
+    const pdfBytes = await pdfDoc.save();
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.send(pdfBytes);
+
+    return res.json(
+      new ApiResponse(200, { FindRequest }, "Certificate request approved and certificate generated.")
+    );
   } catch (error) {
+    console.error("Error during certificate approval:", error);
     return res
       .status(500)
       .json(new ApiError(500, error.message, "Error on the server"));
   }
 });
+
 
 const DenyCertificateRequest = asyncHandler(async (req, res) => {
   try {
@@ -129,9 +143,26 @@ const DenyCertificateRequest = asyncHandler(async (req, res) => {
   }
 });
 
+const DeleteRequest = asyncHandler(async(req ,res)=>{
+
+})
+
+const ClaimCertificates = asyncHandler(async ( req ,res ) =>{
+  const {email} = req.body ;
+  const user = await FormData.findOne({email}) ;
+
+  if(!user){
+    new ApiError(400 , "no request found")
+  }
+
+  return res.json(200 , {user} , )  
+
+})
+
 export {
   Register,
   GetAllReq,
   ApproveCertificateRequest,
   DenyCertificateRequest,
+  DeleteRequest , 
 };
