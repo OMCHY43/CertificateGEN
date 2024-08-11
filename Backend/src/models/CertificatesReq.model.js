@@ -10,7 +10,6 @@ const FormSchema = new Schema({
   phone: {
     type: String,
     required: true,
-    unique: true,
     trim: true,
   },
   email: {
@@ -30,9 +29,11 @@ const FormSchema = new Schema({
     required: true,
     trim: true,
   },
-  ReqStatus : {
-    type:String 
-  }
+  CertificatesStatus: {
+    type: String,
+    enum: ["approved", "denied", "pending"],
+    default: "pending",
+  },
 });
 
 export const FormData = mongoose.model("FormData", FormSchema);
