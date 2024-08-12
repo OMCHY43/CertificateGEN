@@ -23,7 +23,7 @@ const CertificatesRequests = () => {
   // Sample functions for handling actions
   const handleApprove = async (id) => {
     const response = await axios.patch(`http://localhost:5000/api/v1/users/ApproveCertificateRequest/${id}`)
-    console.log(response);
+    console.log(response.data);
     if(response){
       console.log("ok");
       

@@ -1,6 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from 'mongoose';
 
-const FormSchema = new Schema(
+const FormSchema = new mongoose.Schema(
   {
     FullName: {
       type: String,
@@ -32,11 +32,13 @@ const FormSchema = new Schema(
     },
     CertificatesStatus: {
       type: String,
-      enum: ["approved", "denied", "pending"],
-      default: "pending",
+      enum: ['approved', 'denied', 'pending'],
+      default: 'pending',
     },
   },
   { timestamps: true } // Enable timestamps
 );
 
-export const FormData = mongoose.model("FormData", FormSchema);
+const FormData = mongoose.model('FormData', FormSchema);
+
+export { FormData };
