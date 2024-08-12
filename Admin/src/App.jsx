@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/Slidebar/Slidebar';
 import CertificatesRequests from './Pages/CerificatesRequest';
+import AddWorkShop from './Pages/AddWorkShop';
 
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -19,6 +20,7 @@ const App = () => {
           </button>
           <Routes>
             <Route path="/certificates-requests" element={<CertificatesRequests />} />
+            <Route path='/Addworkshop' element={<AddWorkShop/>} />
           </Routes>
         </div>
       </Router>

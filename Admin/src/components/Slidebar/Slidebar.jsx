@@ -19,6 +19,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         >
           Certificates Requests
         </Link>
+        <Link
+          to="/Addworkshop"
+          className="block px-4 py-2 hover:bg-blue-700"
+          onClick={() => setSidebarOpen(false)}
+        >
+          Addworkshop
+        </Link>
       </nav>
       <div className="p-4 text-sm border-t border-blue-700">
         Logged in as Admin
