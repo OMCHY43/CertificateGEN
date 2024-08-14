@@ -21,7 +21,7 @@ const CertificatesRequests = () => {
     }
 
     fetchData()
-  }, [])
+  }, [handleDelete])
 
   const handleApprove = async (id) => {
     const response = await axios.patch(`https://full-stack-bytesminders.onrender.com/api/v1/users/ApproveCertificateRequest/${id}`)
@@ -42,10 +42,13 @@ const CertificatesRequests = () => {
     
   };
 
-  const handleDelete = (id) => {
-    toast.warning(`Deleted request with id: ${id}`);
-    // Add your deletion logic here
-  };
+
+    const handleDelete = async(id) => {
+      const response = await axios.delete(`https://full-stack-bytesminders.onrender.com/api/v1/users/DenyCertificateRequest/${id}`)
+      if(response){
+        toast.warning(`request deleted`);   
+      }
+    };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg">

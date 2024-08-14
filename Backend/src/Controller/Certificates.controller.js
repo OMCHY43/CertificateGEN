@@ -89,11 +89,16 @@ const ApproveCertificateRequest = asyncHandler(async (req, res) => {
 // Claim certificate
 const ClaimCertificates = asyncHandler(async (req, res) => {
   try {
-    const { email } = req.body;
-    const user = await FormData.findOne({ email });
-
+    const { email , Workshop } = req.body;
+    const user = await FormData.findOne({ email , Workshop });
+    const MatchWorkshop = await FormData.findOne({ Workshop });
+    
     if (!user) {
       throw new ApiError(400, 'No request found');
+    }
+    
+    if(!MatchWorkshop){
+      throw new ApiResponse(400 , null , "Please selecet Your correct workshop Name")
     }
 
     if (user.CertificatesStatus !== 'approved') {
