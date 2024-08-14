@@ -20,24 +20,27 @@ const CertificatesRequests = () => {
 
     fetchData()
   }, [])
-  // Sample functions for handling actions
+
   const handleApprove = async (id) => {
     const response = await axios.patch(`https://full-stack-bytesminders.onrender.com/api/v1/users/ApproveCertificateRequest/${id}`)
     console.log(response.data);
     if(response){
       console.log("ok");
-      
     }
     
   };
 
-  const handleDeny = (id) => {
-    alert(`Denied request with id: ${id}`);
-    // Add your denial logic here
+  const handleDeny = async (id) => {
+    const response = await axios.patch(`https://full-stack-bytesminders.onrender.com/api/v1/users/DenyCertificateRequest/${id}`)
+    console.log(response);
+    if(response){
+      toast.error("User Denied")
+    }
+    
   };
 
   const handleDelete = (id) => {
-    alert(`Deleted request with id: ${id}`);
+    toast.warning(`Deleted request with id: ${id}`);
     // Add your deletion logic here
   };
 
@@ -59,8 +62,8 @@ const CertificatesRequests = () => {
             {data.map((request) => (
               <tr key={request._id} className="hover:bg-gray-100">
                 <td className="border-t px-4 py-3">{request.FullName}</td>
-                <td className="border-t px-4 py-3">{request.Workshop}</td>
                 <td className="border-t px-4 py-3">{request.email}</td>
+                <td className="border-t px-4 py-3">{request.Workshop}</td>
                 <td className="border-t px-4 py-3">{new Date(request.createdAt).toLocaleString()}</td>
                 <td className="border-t px-4 py-3 text-center">
                   <div className="flex justify-center space-x-2">

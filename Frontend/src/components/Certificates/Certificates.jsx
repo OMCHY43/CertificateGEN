@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Popup from "./ClaimCertificates";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Certificates = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -52,9 +53,9 @@ const Certificates = () => {
       console.log("Response:", response);
 
       if (response.data.statusCode === 200) {
-        alert(response.data.message);
+        toast.success(response.data.message);
       } else if (response.data.statusCode === 409) {
-        alert("Request is already sent with this phone and email.");
+        toast.success("Request is already sent with this phone and email.");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
