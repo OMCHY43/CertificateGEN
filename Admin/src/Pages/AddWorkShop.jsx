@@ -15,7 +15,7 @@ const AddWorkShop = () => {
     const fetchWorkshops = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:5000/api/v1/admin/GetAllWorkShop");
+        const response = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop");
         setWorkshops(response.data.data); // Access the array correctly
       } catch (error) {
         setError("Failed to fetch workshops. Please try again.");
@@ -38,7 +38,7 @@ const AddWorkShop = () => {
     try {
       if (editingWorkshop) {
         // Update existing workshop
-        const response = await axios.put(`http://localhost:5000/api/v1/admin/UpdateWorkShop/${editingWorkshop._id}`, workshopData);
+        const response = await axios.put(`https://full-stack-bytesminders.onrender.com/api/v1/admin/UpdateWorkShop/${editingWorkshop._id}`, workshopData);
         if (response.status === 200) {
           setWorkshops(workshops.map((ws) =>
             ws._id === editingWorkshop._id ? { ...ws, ...workshopData } : ws
@@ -48,7 +48,7 @@ const AddWorkShop = () => {
         setEditingWorkshop(null);
       } else {
         // Add new workshop
-        const response = await axios.post("http://localhost:5000/api/v1/admin/AddWorkShop", workshopData);
+        const response = await axios.post("https://full-stack-bytesminders.onrender.com/api/v1/admin/AddWorkShop", workshopData);
         if (response.status === 201) {
           const newWorkshop = response.data.data;
           setWorkshops([...workshops, newWorkshop]);
@@ -73,7 +73,7 @@ const AddWorkShop = () => {
   // Handle deleting a workshop
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/v1/admin/DeleteWorkShop/${id}`);
+      await axios.delete(`https://full-stack-bytesminders.onrender.com/api/v1/admin/DeleteWorkShop/${id}`);
       setWorkshops(workshops.filter((ws) => ws._id !== id));
       setSuccess("Workshop deleted successfully!");
     } catch (error) {

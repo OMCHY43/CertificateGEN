@@ -11,7 +11,7 @@ const CertificatesRequests = () => {
 
   useEffect(()=>{
     async function fetchData(){
-      const response = await axios.get("http://localhost:5000/api/v1/users/AllRequest") ;
+      const response = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/users/AllRequest") ;
       console.log(response) ;
       if(response){
         setData(response.data.data)
@@ -22,7 +22,7 @@ const CertificatesRequests = () => {
   }, [])
   // Sample functions for handling actions
   const handleApprove = async (id) => {
-    const response = await axios.patch(`http://localhost:5000/api/v1/users/ApproveCertificateRequest/${id}`)
+    const response = await axios.patch(`https://full-stack-bytesminders.onrender.com/api/v1/users/ApproveCertificateRequest/${id}`)
     console.log(response.data);
     if(response){
       console.log("ok");

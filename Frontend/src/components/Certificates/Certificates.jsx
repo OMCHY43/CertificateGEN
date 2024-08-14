@@ -31,7 +31,7 @@ const Certificates = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get("http://localhost:5000/api/v1/admin/GetAllWorkShop");
+        const response = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop");
         console.log(response);
         if (response.data.data) {
           setWorkshops(response.data.data);
@@ -48,7 +48,7 @@ const Certificates = () => {
     e.preventDefault();
     setError("");
     try {
-      const response = await axios.post("http://localhost:5000/api/v1/users/Register", formData);
+      const response = await axios.post("https://full-stack-bytesminders.onrender.com/api/v1/users/Register", formData);
       console.log("Response:", response);
 
       if (response.data.statusCode === 200) {

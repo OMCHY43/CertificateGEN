@@ -11,7 +11,7 @@ const Popup = ({ onClose }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/v1/users/ClaimCertificates",
+        "https://full-stack-bytesminders.onrender.com/api/v1/users/ClaimCertificates",
         { email, workshop: selectedWorkshop }, // Submit both email and selected workshop
         { responseType: "arraybuffer" }
       );
@@ -47,7 +47,7 @@ const Popup = ({ onClose }) => {
     async function fetchData() {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/v1/admin/GetAllWorkShop"
+          "https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop"
         );
         if (response.data.data) {
           setWorkshops(response.data.data);
