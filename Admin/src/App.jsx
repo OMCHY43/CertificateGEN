@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/Slidebar/Slidebar';
 import CertificatesRequests from './Pages/CerificatesRequest';
 import AddWorkShop from './Pages/AddWorkShop';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
             <Route path='/Addworkshop' element={<AddWorkShop/>} />
           </Routes>
         </div>
+        <ToastContainer />
       </Router>
     </div>
   );

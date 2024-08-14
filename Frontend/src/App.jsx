@@ -5,6 +5,9 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Layout from './Layout/Layout';
 import Certificates from './components/Certificates/Certificates';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function App() {
   return (
     <Router>
@@ -14,6 +17,7 @@ function App() {
           <Route path='/Certificates' element={<Certificates />} />
         </Route>
       </Routes>
+      <ToastContainer />
     </Router>
   );
 }
