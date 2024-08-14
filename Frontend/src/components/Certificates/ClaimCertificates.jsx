@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useEffect } from "react";
 
 const Popup = ({ onClose }) => {
   const [email, setEmail] = useState('');
+  const [Workshop , setWorkshop] = useState([])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,6 +39,18 @@ const Popup = ({ onClose }) => {
     setEmail(e.target.value);
   };
 
+  useEffect(()=>{
+    async function FetchData(){
+
+      const response = await axios.get("http://localhost:5000/api/v1/admin/GetAllWorkShop")
+      console.log(response);
+      if(response.data.data){
+        setWorkshop(response.data.data)
+      }
+    }
+    FetchData()
+  } , [])
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 text-black">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
@@ -51,13 +65,18 @@ const Popup = ({ onClose }) => {
             name="email"
             required
           />
-          <select
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
-          >
-            <option value="">Select Workshop</option>
-            <option value="Workshop 1">Workshop 1</option>
-            <option value="Workshop 2">Workshop 2</option>
-          </select>
+            {
+              Workshop.map((item)=> (
+                <>
+                <select
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none" 
+                >
+                <option value="" key={item._id}>Select Workshop</option>
+                <option value={item.WorkShopName}>{item.WorkShopName}</option>
+                </select>
+                </>
+              ))
+            }
           <p className="text-red-500 text-xs mt-2">If facing any issues: Contact Admin of your WhatsApp Group.</p>
           <div className="mt-4 flex justify-end space-x-2">
             <button type="button" onClick={onClose} className="bg-purple-500 text-white py-2 px-4 rounded-lg">Close</button>
