@@ -8,6 +8,7 @@ import { fileURLToPath } from "url";
 import { PDFDocument, rgb } from "pdf-lib";
 import * as fontkit from 'fontkit';
 
+
 const Register = asyncHandler(async (req, res) => {
   try {
     const { FullName, phone, email, Workshop, state } = req.body;
@@ -184,7 +185,11 @@ const DenyCertificateRequest = asyncHandler(async (req, res) => {
 
 
 const DeleteRequest = asyncHandler(async (req, res) => {
+ const {id} = req.params ;
 
+ const Delete = await FormData.findByIdAndDelete(id) ;
+
+ return res.json(new ApiResponse(200 , null , " Request Deleted"))
 })
 
 

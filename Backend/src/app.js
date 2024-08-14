@@ -29,9 +29,10 @@ app.use(express.static("public"));
 // Import Routes
 import RegisterRouter from "./Routes/certificates.routes.js";
 import WorkShopRouter from "./Routes/WorkShop.routes.js"
+import AdminLoginRoute from "./Routes/Admin.Login.routes.js"
 // End-Points
 app.use("/api/v1/users" , RegisterRouter) ;
 app.use("/api/v1/admin" , WorkShopRouter)
-
+app.use("/api/v1/Admin" ,AdminLoginRoute)
 
 export { app };

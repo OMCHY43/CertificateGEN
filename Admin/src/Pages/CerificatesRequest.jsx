@@ -1,54 +1,63 @@
 import React from 'react';
 import { useEffect } from 'react';
-import axios from "axios"
+import axios from "axios";
 import { useState } from 'react';
 import { FaCheck, FaTimes, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
-
 const CertificatesRequests = () => {
   // Sample data
-  const [data , setData] = useState([])
+  const [data, setData] = useState([]);
 
-  useEffect(()=>{
-    async function fetchData(){
-      const response = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/users/AllRequest") ;
-      console.log(response) ;
-      if(response){
-        setData(response.data.data)
-        toast.success("Data Fetched Successfully")
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/users/AllRequest");
+        if (response) {
+          setData(response.data.data);
+          toast.success("Data Fetched Successfully");
+        }
+      } catch (error) {
+        toast.error("Failed to fetch data");
       }
     }
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   const handleApprove = async (id) => {
-    const response = await axios.patch(`https://full-stack-bytesminders.onrender.com/api/v1/users/ApproveCertificateRequest/${id}`)
-    console.log(response.data);
-    if(response){
-      console.log("ok");
-      toast.success("User Approved")
+    try {
+      const response = await axios.patch(`https://full-stack-bytesminders.onrender.com/api/v1/users/ApproveCertificateRequest/${id}`);
+      if (response) {
+        toast.success("User Approved");
+      }
+    } catch (error) {
+      toast.error("Failed to approve user");
     }
-    
   };
 
   const handleDeny = async (id) => {
-    const response = await axios.patch(`https://full-stack-bytesminders.onrender.com/api/v1/users/DenyCertificateRequest/${id}`)
-    console.log(response);
-    if(response){
-      toast.error("User Denied")
+    try {
+      const response = await axios.patch(`https://full-stack-bytesminders.onrender.com/api/v1/users/DenyCertificateRequest/${id}`);
+      if (response) {
+        toast.error("User Denied");
+      }
+    } catch (error) {
+      toast.error("Failed to deny user");
     }
-    
   };
 
-
-    const handleDelete = async(id) => {
-      const response = await axios.delete(`https://full-stack-bytesminders.onrender.com/api/v1/users/DenyCertificateRequest/${id}`)
-      if(response){
-        toast.error(`request deleted`);   
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(`https://full-stack-bytesminders.onrender.com/api/v1/users/DenyCertificateRequest/${id}`);
+      if (response) {
+        setData(data.filter((request) => request._id !== id)); // Update state to remove the deleted user
+        toast.error(`Request deleted`);
       }
-    };
+    } catch (error) {
+      toast.error("Failed to delete request");
+    }
+  };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -59,7 +68,7 @@ const CertificatesRequests = () => {
             <tr>
               <th className="py-3 px-4 text-left">Name</th>
               <th className="py-3 px-4 text-left">Email</th>
-              <th className="py-3 px-4 text-left">WorkShop</th>
+              <th className="py-3 px-4 text-left">Workshop</th>
               <th className="py-3 px-4 text-left">Request Date</th>
               <th className="py-3 px-4 text-center">Actions</th>
             </tr>
@@ -103,3 +112,4 @@ const CertificatesRequests = () => {
 }
 
 export default CertificatesRequests;
+  
