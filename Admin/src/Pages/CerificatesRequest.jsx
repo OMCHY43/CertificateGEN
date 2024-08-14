@@ -21,7 +21,7 @@ const CertificatesRequests = () => {
     }
 
     fetchData()
-  }, [handleDelete])
+  }, [])
 
   const handleApprove = async (id) => {
     const response = await axios.patch(`https://full-stack-bytesminders.onrender.com/api/v1/users/ApproveCertificateRequest/${id}`)
@@ -46,7 +46,7 @@ const CertificatesRequests = () => {
     const handleDelete = async(id) => {
       const response = await axios.delete(`https://full-stack-bytesminders.onrender.com/api/v1/users/DenyCertificateRequest/${id}`)
       if(response){
-        toast.warning(`request deleted`);   
+        toast.error(`request deleted`);   
       }
     };
 
