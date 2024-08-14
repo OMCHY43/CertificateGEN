@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import axios from "axios"
 import { useState } from 'react';
 import { FaCheck, FaTimes, FaTrash } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 
 const CertificatesRequests = () => {
@@ -15,6 +16,7 @@ const CertificatesRequests = () => {
       console.log(response) ;
       if(response){
         setData(response.data.data)
+        toast.success("Data Fetched Successfully")
       }
     }
 
@@ -26,6 +28,7 @@ const CertificatesRequests = () => {
     console.log(response.data);
     if(response){
       console.log("ok");
+      toast.success("User Approved")
     }
     
   };

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const AddWorkShop = () => {
   const [workshopName, setWorkshopName] = useState("");
@@ -17,6 +18,7 @@ const AddWorkShop = () => {
       try {
         const response = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop");
         setWorkshops(response.data.data); // Access the array correctly
+        toast.success("data fetched successfully")
       } catch (error) {
         setError("Failed to fetch workshops. Please try again.");
       } finally {
