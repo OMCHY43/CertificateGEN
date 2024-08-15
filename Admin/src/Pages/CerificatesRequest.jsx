@@ -72,7 +72,7 @@ const CertificatesRequests = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg">
+    <div className="bg-white p-6 rounded-lg w-full shadow-lg">
       <h1 className="text-2xl font-bold mb-4">Certificates Requests</h1>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white">
