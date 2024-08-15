@@ -28,13 +28,16 @@ const Popup = ({ onClose }) => {
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = "certificate.pdf";
-
+      
       // Append link to the document and trigger click to start download
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
+      
     } catch (error) {
+      if(error.response.status === 403){
+        alert("You are not approved")
+      }
       console.error("Error claiming certificate", error);
       setError("Failed to claim certificate. Please check your details and try again.");
     } finally {
@@ -61,9 +64,6 @@ const Popup = ({ onClose }) => {
           setWorkshops(response.data.data);
         }
       } catch (error) {
-        if(error.response.status === 403){
-          alert("You are not approved")
-        }
         console.error("Error fetching workshops:", error);
         setError("Failed to fetch workshops.");
       }
