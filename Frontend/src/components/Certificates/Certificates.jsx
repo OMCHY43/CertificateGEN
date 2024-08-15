@@ -3,6 +3,7 @@ import Popup from "./ClaimCertificates";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Loader from "react-loader-spinner"; // Install this or use a custom spinner
 
 const Certificates = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -15,6 +16,7 @@ const Certificates = () => {
   });
   const [workshops, setWorkshops] = useState([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state
 
   const openPopup = () => {
     setIsPopupOpen(true);
@@ -31,8 +33,11 @@ const Certificates = () => {
 
   useEffect(() => {
     async function fetchData() {
+      setLoading(true); // Start loading
       try {
-        const response = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop");
+        const response = await axios.get(
+          "https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop"
+        );
         console.log(response);
         if (response.data.data) {
           setWorkshops(response.data.data);
@@ -40,6 +45,8 @@ const Certificates = () => {
       } catch (error) {
         console.error("Error fetching workshops:", error);
         setError("Failed to fetch workshops.");
+      } finally {
+        setLoading(false); // End loading
       }
     }
     fetchData();
@@ -48,8 +55,12 @@ const Certificates = () => {
   const SubmitData = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true); // Start loading on form submit
     try {
-      const response = await axios.post("https://full-stack-bytesminders.onrender.com/api/v1/users/Register", formData);
+      const response = await axios.post(
+        "https://full-stack-bytesminders.onrender.com/api/v1/users/Register",
+        formData
+      );
       console.log("Response:", response);
 
       if (response.data.statusCode === 200) {
@@ -60,6 +71,8 @@ const Certificates = () => {
     } catch (error) {
       console.error("Error submitting form:", error);
       setError("Error submitting the form. Please try again.");
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -73,63 +86,81 @@ const Certificates = () => {
           <button className="text-white py-2 px-4 rounded-full">COURSE</button>
           <button className="text-white py-2 px-4 rounded-full">INTERNSHIP</button>
         </div>
-        <h1 className="text-center text-xl text-primary mb-4">Register - Workshop Certificate</h1>
-        <p className="text-center text-white mb-6 font-bold text-xl">Bytes Minders</p>
+        <h1 className="text-center text-xl text-primary mb-4">
+          Register - Workshop Certificate
+        </h1>
+        <p className="text-center text-white mb-6 font-bold text-xl">
+          Bytes Minders
+        </p>
 
-        <form className="space-y-4" onSubmit={SubmitData}>
-          <input
-            onChange={handleChange}
-            value={formData.FullName}
-            name="FullName"
-            type="text"
-            placeholder="Full Name"
-            className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
-          />
-          <div className="flex space-x-4">
+        {loading ? (
+          <div className="flex justify-center">
+            {/* Use any loading spinner/animation here */}
+            <Loader
+              type="ThreeDots"
+              color="#00BFFF"
+              height={80}
+              width={80}
+            />
+          </div>
+        ) : (
+          <form className="space-y-4" onSubmit={SubmitData}>
             <input
               onChange={handleChange}
-              value={formData.phone}
-              name="phone"
+              value={formData.FullName}
+              name="FullName"
               type="text"
-              placeholder="Phone Number"
+              placeholder="Full Name"
+              className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
+            />
+            <div className="flex space-x-4">
+              <input
+                onChange={handleChange}
+                value={formData.phone}
+                name="phone"
+                type="text"
+                placeholder="Phone Number"
+                className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
+              />
+              <select
+                onChange={handleChange}
+                value={formData.state}
+                name="state"
+                className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
+              >
+                <option>Select State</option>
+                <option>Bihar</option>
+                <option>West Bengal</option>
+                <option>Goa</option>
+              </select>
+            </div>
+            <input
+              onChange={handleChange}
+              value={formData.email}
+              name="email"
+              type="email"
+              placeholder="Email"
               className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
             />
             <select
               onChange={handleChange}
-              value={formData.state}
-              name="state"
+              value={formData.Workshop}
+              name="Workshop"
               className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
             >
-              <option>Select State</option>
-              <option>Bihar</option>
-              <option>West Bengal</option>
-              <option>Goa</option>
+              <option>Select Workshop</option>
+              {workshops.map((item) => (
+                <option key={item._id} value={item.WorkShopName}>
+                  {item.WorkShopName}
+                </option>
+              ))}
             </select>
-          </div>
-          <input
-            onChange={handleChange}
-            value={formData.email}
-            name="email"
-            type="email"
-            placeholder="Email"
-            className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
-          />
-          <select
-            onChange={handleChange}
-            value={formData.Workshop}
-            name="Workshop"
-            className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
-          >
-            <option>Select Workshop</option>
-            {workshops.map((item) => (
-              <option key={item._id} value={item.WorkShopName}>
-                {item.WorkShopName}
-              </option>
-            ))}
-          </select>
 
-          <button className="w-full py-2 mt-4 bg-primary rounded-lg text-white">REGISTER</button>
-        </form>
+            <button className="w-full py-2 mt-4 bg-primary rounded-lg text-white">
+              REGISTER
+            </button>
+          </form>
+        )}
 
         {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
 
@@ -145,7 +176,9 @@ const Certificates = () => {
 
         <div className="mt-4 text-center">
           <Link to="/">
-            <button className="w-full py-2 mt-4 bg-accent rounded-lg text-white">GO BACK</button>
+            <button className="w-full py-2 mt-4 bg-accent rounded-lg text-white">
+              GO BACK
+            </button>
           </Link>
         </div>
       </div>
