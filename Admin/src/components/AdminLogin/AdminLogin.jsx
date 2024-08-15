@@ -5,11 +5,10 @@ import { useNavigate } from 'react-router-dom';
 const AdminLogin = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
-    const [isAdminExists, setIsAdminExists] = useState(false); // null at first, until check completes
+    const [isAdminExists, setIsAdminExists] = useState(false);
 
     const navigate = useNavigate();
 
-    // Check if an admin already exists when the component loads
     useEffect(() => {
         const checkAdminExists = async () => {
             try {
@@ -17,6 +16,7 @@ const AdminLogin = () => {
                 setIsAdminExists(res.data.exist);  
             } catch (err) {
                 console.error(err);
+                setError('Error checking admin existence');
             }
         };
 
@@ -30,19 +30,17 @@ const AdminLogin = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            let res;
             if (isAdminExists) {
-                // Login logic
-                const res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Login', formData);
-                localStorage.setItem('token', res.data.token);
-                navigate("/certificates-requests"); // Redirect to home
+                res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Login', formData);
             } else {
-                // Register logic
-                const res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Register', formData);
-                localStorage.setItem('token', res.data.data.token);
+                res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Register', formData);
                 setIsAdminExists(true); // Now admin is registered
-                navigate("/certificates-requests"); // Redirect to home
             }
+            localStorage.setItem('token', res.data.token);
+            navigate("/certificates-requests"); // Redirect to home
         } catch (err) {
+            console.error(err);
             setError('Invalid credentials or registration error');
         }
     };

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Sidebar from './components/Slidebar/Slidebar';
-import CertificatesRequests from './Pages/CerificatesRequest';
+import Sidebar from './components/Sidebar/Sidebar';
+import CertificatesRequests from './Pages/CertificatesRequests';
 import AddWorkShop from './Pages/AddWorkShop';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -26,7 +26,7 @@ const App = () => {
           <Routes>
             <Route path="/AdminLogin" element={token ? <Navigate to="/certificates-requests" /> : <AdminLogin />} />
             <Route path="/certificates-requests" element={token ? <CertificatesRequests /> : <Navigate to="/AdminLogin" />} />
-            <Route path="/Addworkshop" element={token ? <AddWorkShop /> : <Navigate to="/AdminLogin" />} />
+            <Route path="/AddWorkShop" element={token ? <AddWorkShop /> : <Navigate to="/AdminLogin" />} />
             <Route path="/" element={token ? <Navigate to="/certificates-requests" /> : <Navigate to="/AdminLogin" />} />
             <Route path="*" element={<Navigate to={token ? "/certificates-requests" : "/AdminLogin"} />} />
           </Routes>
