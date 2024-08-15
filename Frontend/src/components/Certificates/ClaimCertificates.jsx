@@ -61,7 +61,7 @@ const Popup = ({ onClose }) => {
           setWorkshops(response.data.data);
         }
       } catch (error) {
-        if(response.status === 403){
+        if(error.response.status === 403){
           alert("You are not approved")
         }
         console.error("Error fetching workshops:", error);
