@@ -26,7 +26,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           Certificates Requests
         </Link>
         <Link
-          to="/admin/Addworkshop"
+          to="/admin/addworkshop"
           className="block px-4 py-2 hover:bg-blue-700"
           onClick={() => setSidebarOpen(false)}
         >
