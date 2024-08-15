@@ -23,4 +23,13 @@ const AdminLogin = asyncHandler(async(req,res)=>{
     
 })
 
-export {AdminLogin}
+const AdminCheck = asyncHandler(async(req,res) =>{
+    const admin = await Admin.findOne() 
+    if(admin){
+        res.json({exist : true})
+    }else{
+        res.json({exist : false})
+    }
+})
+
+export {AdminLogin ,AdminCheck}
