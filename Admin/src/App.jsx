@@ -6,6 +6,7 @@ import AddWorkShop from './Pages/AddWorkShop';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoutes.jsx';  // Import your ProtectedRoute component
+import AdminLogin from "./components/AdminLogin/AdminLogin.jsx";
 
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -23,23 +24,15 @@ const App = () => {
           </button>
 
           <Routes>
-            {/* Wrap protected routes with ProtectedRoute */}
-            <Route
-              path="/certificates-requests"
-              element={
-                <ProtectedRoute>
-                  <CertificatesRequests />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/Addworkshop"
-              element={
-                <ProtectedRoute>
-                  <AddWorkShop />
-                </ProtectedRoute>
-              }
-            />
+            {/* Login Route */}
+            <Route path='/AdminLogin' element={<AdminLogin />} />
+
+            {/* Protected Routes - Wrap all the protected routes inside the ProtectedRoute */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/certificates-requests" element={<CertificatesRequests />} />
+              <Route path="/Addworkshop" element={<AddWorkShop />} />
+            </Route>
+
           </Routes>
         </div>
         <ToastContainer />
