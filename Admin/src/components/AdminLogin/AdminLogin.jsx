@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
 const AdminLogin = () => {
-    const [formData, setFormData] = useState({ username: '', password: '' });
+    const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [isAdminExists, setIsAdminExists] = useState(null); // null at first, until check completes
     const [isRegistering, setIsRegistering] = useState(false);
@@ -60,13 +60,13 @@ console.log(res);
                 </h2>
                 <form onSubmit={handleSubmit} className="mt-6">
                     <div className="mb-4">
-                        <label className="block text-gray-600 text-sm font-semibold mb-2" htmlFor="username">
-                            Username
+                        <label className="block text-gray-600 text-sm font-semibold mb-2" htmlFor="email">
+                            email
                         </label>
                         <input 
                             type="text"
-                            name="username"
-                            placeholder="Enter your username"
+                            name="email"
+                            placeholder="Enter your email"
                             onChange={handleChange}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                             required
