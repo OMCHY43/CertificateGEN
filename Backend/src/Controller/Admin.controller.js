@@ -24,16 +24,16 @@ const AdminLogin = asyncHandler(async(req,res)=>{
 })
 
 const AdminRegister = asyncHandler(async(req , res) =>{
-    const {email , username} = req.body ;
+    const {email , password} = req.body ;
 
     if(!email){
         res.json(new ApiResponse(400 , null , "email is required"))
     }
-    if(!username){
+    if(!password){
         res.json(new ApiResponse(400 , null , "username is required"))
     }
 
-    const existingAdmin = await Admin.findOne(email)
+    const existingAdmin = await Admin.findOne({email})
 
     if(existingAdmin){
         return res.json(new ApiResponse(400 , null , "admin is alredy register"))
