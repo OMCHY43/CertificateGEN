@@ -16,7 +16,7 @@ const AdminLogin = () => {
                 const res = await axios.get('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check');
                 console.log(res);
                 
-                setIsAdminExists(res.data.exist);  // use corrected "exists" key
+                setIsAdminExists(res.data.exist);  
             } catch (err) {
                 console.error(err);
             }
@@ -38,7 +38,7 @@ const AdminLogin = () => {
                 console.log(res);
 
                 // Assuming backend sends { token: 'your_token_here' }
-                localStorage.setItem('token', res.data.data.token);
+                localStorage.setItem('token', res.data.token);
                 navigate("/"); // Redirect to home
             } else {
                 // Register logic
