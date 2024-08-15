@@ -2,13 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
+  const token = localStorage.getItem("token");
 
-  const token = localStorage.getItem("token")
+  if (!token) {
+    return null; // Hide sidebar completely if no token
+  }
+
   return (
-
-    <>
-    {token ? (
-
     <div
       className={`fixed inset-y-0 left-0 transform ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
@@ -19,14 +19,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       </div>
       <nav className="flex-grow">
         <Link
-          to="/certificates-requests"
+          to="/admin/certificates-requests"
           className="block px-4 py-2 hover:bg-blue-700"
           onClick={() => setSidebarOpen(false)}
         >
           Certificates Requests
         </Link>
         <Link
-          to="/Addworkshop"
+          to="/admin/Addworkshop"
           className="block px-4 py-2 hover:bg-blue-700"
           onClick={() => setSidebarOpen(false)}
         >
@@ -37,9 +37,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         Logged in as Admin
       </div>
     </div>
-    ) : ( " you dont have permition to access this page")}
-    
-        </>
   );
 };
 
