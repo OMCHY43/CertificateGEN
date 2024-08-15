@@ -36,7 +36,7 @@ const AdminLogin = () => {
                 console.log(res);
 
                 // Assuming backend sends { token: 'your_token_here' }
-                localStorage.setItem('token', res.data.token);
+                localStorage.setItem('token', res.data.data.token);
                 navigate("/"); // Redirect to home
             } else {
                 // Register logic
@@ -44,7 +44,7 @@ const AdminLogin = () => {
                 console.log(res);
 
                 // Assuming backend sends { token: 'your_token_here' }
-                localStorage.setItem('token', res.data.token);
+                localStorage.setItem('token', res.data.data.token);
                 setIsAdminExists(true); // Now admin is registered
                 navigate("/"); // Redirect to home
             }
