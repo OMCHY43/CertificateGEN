@@ -33,12 +33,12 @@ const AdminLogin = () => {
             let res;
             if (isAdminExists) {
                 res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Login', formData);
+                navigate("/certificates-requests"); // Redirect to home
+                localStorage.setItem('token', res.data.token);
             } else {
                 res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Register', formData);
                 setIsAdminExists(true); // Now admin is registered
             }
-            localStorage.setItem('token', res.data.token);
-            navigate("/certificates-requests"); // Redirect to home
         } catch (err) {
             console.error(err);
             setError('Invalid credentials or registration error');

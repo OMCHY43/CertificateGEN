@@ -24,10 +24,10 @@ const App = () => {
           </button>
 
           <Routes>
-            <Route path="/AdminLogin" element={token ? <Navigate to="/certificates-requests" /> : <AdminLogin />} />
-            <Route path="/certificates-requests" element={token ? <CertificatesRequests /> : <Navigate to="/AdminLogin" />} />
-            <Route path="/AddWorkShop" element={token ? <AddWorkShop /> : <Navigate to="/AdminLogin" />} />
-            <Route path="/" element={token ? <Navigate to="/certificates-requests" /> : <Navigate to="/AdminLogin" />} />
+            <Route path="/AdminLogin" element={AdminLogin} />
+            <Route path="/certificates-requests" element={<CertificatesRequests /> } />
+            <Route path="/AddWorkShop" element={<AddWorkShop /> } />
+            <Route path="/" element={ <Navigate to="/certificates-requests" /> } />
             <Route path="*" element={<Navigate to={token ? "/certificates-requests" : "/AdminLogin"} />} />
           </Routes>
         </div>
