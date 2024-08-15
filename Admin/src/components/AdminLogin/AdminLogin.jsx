@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const AdminLogin = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
-    const [isAdminExists, setIsAdminExists] = useState(null); // null at first, until check completes
+    const [isAdminExists, setIsAdminExists] = useState(false); // null at first, until check completes
 
     const navigate = useNavigate();
 
@@ -16,7 +16,7 @@ const AdminLogin = () => {
                 const res = await axios.get('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check');
                 console.log(res);
                 
-                setIsAdminExists(res.data.data.exists);  // use corrected "exists" key
+                setIsAdminExists(res.data.exists);  // use corrected "exists" key
             } catch (err) {
                 console.error(err);
             }
