@@ -6,7 +6,7 @@ const AdminLogin = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [isAdminExists, setIsAdminExists] = useState(false);
-
+    
     const navigate = useNavigate();
 
     useEffect(() => {
