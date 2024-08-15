@@ -25,12 +25,12 @@ const App = () => {
 
           <Routes>
             {/* Redirect to login if not authenticated */}
-            <Route path="/AdminLogin" element={token ? <Navigate to="/" /> : <AdminLogin />} />
+            <Route path="/AdminLogin" element={token ? <Navigate to="/certificates-requests" /> : <AdminLogin />} />
             {/* Protected routes */}
             <Route path="/certificates-requests" element={token ? <CertificatesRequests /> : <Navigate to="/AdminLogin" />} />
             <Route path="/Addworkshop" element={token ? <AddWorkShop /> : <Navigate to="/AdminLogin" />} />
             {/* Redirect to login if accessing unknown route */}
-            <Route path="*" element={<Navigate to={token ? "/" : "/AdminLogin"} />} />
+            <Route path="*" element={<Navigate to={token ? "/certificates-requests" : "/AdminLogin"} />} />
           </Routes>
         </div>
         <ToastContainer />
