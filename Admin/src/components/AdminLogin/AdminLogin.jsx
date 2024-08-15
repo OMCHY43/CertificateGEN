@@ -40,7 +40,9 @@ const AdminLogin = () => {
             let res;
             if (isAdminExists) {
                 res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Login', formData);
-                const ACCToken = localStorage.setItem('token', res.data.token); 
+                const ACCToken = localStorage.setItem('token', res.data.token);
+                console.log(ACCToken);
+                
                 if (ACCToken) {
                     navigate("/admin"); 
                 }else{
