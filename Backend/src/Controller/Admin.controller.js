@@ -23,6 +23,29 @@ const AdminLogin = asyncHandler(async(req,res)=>{
     
 })
 
+const AdminRegister = asyncHandler(async(req , res) =>{
+    const {email , username} = req.body ;
+
+    if(!email){
+        res.json(new ApiResponse(400 , null , "email is required"))
+    }
+    if(!username){
+        res.json(new ApiResponse(400 , null , "username is required"))
+    }
+
+    const existingAdmin = await Admin.findOne(email)
+
+    if(existingAdmin){
+        return res.json(new ApiResponse(400 , null , "admin is alredy register"))
+    }
+
+    const registerAdmin = await Admin.create({
+        email , username
+    })
+
+    return res.json(new ApiResponse(200 , registerAdmin , "Admin Register successfully"))
+})
+
 const AdminCheck = asyncHandler(async(req,res) =>{
     const admin = await Admin.findOne() 
     if(admin){
@@ -32,4 +55,4 @@ const AdminCheck = asyncHandler(async(req,res) =>{
     }
 })
 
-export {AdminLogin ,AdminCheck}
+export {AdminLogin ,AdminCheck , AdminRegister}
