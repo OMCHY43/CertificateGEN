@@ -15,6 +15,8 @@ const AdminLogin = () => {
         const checkAdminExists = async () => {
             try {
                 const res = await axios.get('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check');
+                console.log(res);
+                
                 setIsRegistered(res.data.exists); // Assuming your backend returns 'exists: true/false'
             } catch (err) {
                 console.error("Error checking admin existence:", err);
