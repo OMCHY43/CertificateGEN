@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Sidebar from './components/Slidebar/Slidebar';
-import CertificatesRequests from './Pages/CerificatesRequest';
-import AddWorkShop from './Pages/AddWorkShop';
+import CertificatesRequests from './Pages/CerificatesRequest.jsx';
+import AddWorkShop from './Pages/AddWorkShop.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AdminLogin from "./components/AdminLogin/AdminLogin.jsx";
