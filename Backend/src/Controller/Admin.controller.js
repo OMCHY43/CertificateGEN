@@ -41,7 +41,7 @@ const AdminRegister = asyncHandler(async(req , res) =>{
     }
 
     const registerAdmin = await Admin.create({
-        email , username
+        email , password
     })
 
     return res.json(new ApiResponse(200 , registerAdmin , "Admin Register successfully"))
