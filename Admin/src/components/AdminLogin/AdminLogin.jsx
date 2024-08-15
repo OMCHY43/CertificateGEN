@@ -14,8 +14,6 @@ const AdminLogin = () => {
         const checkAdminExists = async () => {
             try {
                 const res = await axios.get('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check');
-                console.log(res);
-                
                 setIsAdminExists(res.data.exist);  
             } catch (err) {
                 console.error(err);
@@ -32,23 +30,17 @@ const AdminLogin = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            if (isAdminExists === true) {
+            if (isAdminExists) {
                 // Login logic
                 const res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Login', formData);
-                console.log(res);
-
-                // Assuming backend sends { token: 'your_token_here' }
                 localStorage.setItem('token', res.data.token);
-                navigate("/"); // Redirect to home
+                navigate("/certificates-requests"); // Redirect to home
             } else {
                 // Register logic
                 const res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Register', formData);
-                console.log(res);
-
-                // Assuming backend sends { token: 'your_token_here' }
                 localStorage.setItem('token', res.data.data.token);
                 setIsAdminExists(true); // Now admin is registered
-                navigate("/"); // Redirect to home
+                navigate("/certificates-requests"); // Redirect to home
             }
         } catch (err) {
             setError('Invalid credentials or registration error');
