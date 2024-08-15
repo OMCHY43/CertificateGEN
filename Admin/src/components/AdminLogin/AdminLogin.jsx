@@ -6,7 +6,6 @@ const AdminLogin = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [isAdminExists, setIsAdminExists] = useState(null); // null at first, until check completes
-    const [isRegistering, setIsRegistering] = useState(false);
 
     const navigate = useNavigate();
 
@@ -15,7 +14,7 @@ const AdminLogin = () => {
         const checkAdminExists = async () => {
             try {
                 const res = await axios.get('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check');
-                setIsAdminExists(res.data.exists);  // true or false
+                setIsAdminExists(res.data.exists);  // use corrected "exists" key
             } catch (err) {
                 console.error(err);
             }
@@ -31,19 +30,21 @@ const AdminLogin = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            if (isAdminExists) {
+            if (isAdminExists === true) {
                 // Login logic
                 const res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Login', formData);
-console.log(res);
+                console.log(res);
 
-                localStorage.setItem('token', res.data.data.token);
+                // Assuming backend sends { token: 'your_token_here' }
+                localStorage.setItem('token', res.data.token);
                 navigate("/"); // Redirect to home
             } else {
                 // Register logic
                 const res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Register', formData);
                 console.log(res);
-                
-                localStorage.setItem('token', res.data.data.token);
+
+                // Assuming backend sends { token: 'your_token_here' }
+                localStorage.setItem('token', res.data.token);
                 setIsAdminExists(true); // Now admin is registered
                 navigate("/"); // Redirect to home
             }
@@ -61,9 +62,9 @@ console.log(res);
                 <form onSubmit={handleSubmit} className="mt-6">
                     <div className="mb-4">
                         <label className="block text-gray-600 text-sm font-semibold mb-2" htmlFor="email">
-                            email
+                            Email
                         </label>
-                        <input 
+                        <input
                             type="text"
                             name="email"
                             placeholder="Enter your email"
@@ -76,7 +77,7 @@ console.log(res);
                         <label className="block text-gray-600 text-sm font-semibold mb-2" htmlFor="password">
                             Password
                         </label>
-                        <input 
+                        <input
                             type="password"
                             name="password"
                             placeholder="Enter your password"
@@ -85,7 +86,7 @@ console.log(res);
                             required
                         />
                     </div>
-                    <button 
+                    <button
                         type="submit"
                         className="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
                     >

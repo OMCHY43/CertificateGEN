@@ -1,5 +1,5 @@
-import mongoose from "mongoose"
-import bcrypt from "bcrypt"
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 const adminSchema = new mongoose.Schema({
     email: {
@@ -10,9 +10,11 @@ const adminSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    accessToken: {
+        type: String,  // Token will be stored here
     }
 });
-
 
 adminSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
@@ -22,4 +24,3 @@ adminSchema.pre('save', async function(next) {
 });
 
 export const Admin = mongoose.model('Admin', adminSchema);
-
