@@ -16,23 +16,37 @@ const App = () => {
     <div className="min-h-screen flex">
       <Router>
         {/* Only show sidebar if token exists */}
-        {token && <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
+        {token && (
+          <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        )}
 
         <div className="flex-grow p-6 bg-gray-100">
-          <button
-            className="md:hidden text-gray-800 mb-4"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            ☰
-          </button>
+          {/* Sidebar Toggle Button - Only for mobile screens */}
+          {token && (
+            <button
+              className="md:hidden text-gray-800 mb-4"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              ☰
+            </button>
+          )}
 
           <Routes>
+            {/* Admin Login Route */}
             <Route path="/" element={<AdminLogin />} />
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route path="certificates-requests" element={<CertificatesRequests />} />
-            </Route>
+
+            {/* Admin Routes (Protected) */}
+            {token ? (
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route path="certificates-requests" element={<CertificatesRequests />} />
+                <Route path="add-workshop" element={<AddWorkShop />} />
+              </Route>
+            ) : (
+              <Route path="*" element={<Navigate to="/" replace />} />
+            )}
           </Routes>
         </div>
+
         <ToastContainer />
       </Router>
     </div>
