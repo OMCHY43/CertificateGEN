@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const AdminLogin = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
-    const [isAdminExists, setIsAdminExists] = useState(false); // null at first, until check completes
-
+    const [isAdminExists, setIsAdminExists] = useState(false);
     const navigate = useNavigate();
 
     // Check if an admin already exists when the component loads
@@ -14,7 +13,7 @@ const AdminLogin = () => {
         const checkAdminExists = async () => {
             try {
                 const res = await axios.get('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check');
-                setIsAdminExists(res.data.exist);  
+                setIsAdminExists(res.data.exist);
             } catch (err) {
                 console.error(err);
             }
@@ -23,6 +22,13 @@ const AdminLogin = () => {
         checkAdminExists();
     }, []);
 
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            navigate("/certificates-requests");
+        }
+    }, [navigate]);
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -30,18 +36,18 @@ const AdminLogin = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            let res;
             if (isAdminExists) {
                 // Login logic
-                const res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Login', formData);
-                localStorage.setItem('token', res.data.token);
-                navigate("/certificates-requests"); // Redirect to home
+                res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Login', formData);
             } else {
                 // Register logic
-                const res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Register', formData);
-                localStorage.setItem('token', res.data.data.token);
+                res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Register', formData);
                 setIsAdminExists(true); // Now admin is registered
-                navigate("/certificates-requests"); // Redirect to home
             }
+            
+            localStorage.setItem('token', res.data.token || res.data.data.token);
+            navigate("/certificates-requests"); // Redirect to home
         } catch (err) {
             setError('Invalid credentials or registration error');
         }
