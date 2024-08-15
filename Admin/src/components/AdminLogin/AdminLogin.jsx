@@ -33,22 +33,29 @@ const AdminLogin = () => {
             let res;
             if (isAdminExists) {
                 res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Login', formData);
-                const ACCToken = localStorage.setItem('token', res.data.token); 
-                if (ACCToken) {
-                    navigate("/"); 
-                }else{
-                    navigate("/")
+                
+                if (res.data.token) {
+                    localStorage.setItem('token', res.data.token); // Save token to localStorage
+                    navigate("/admin", { replace: true }); // Redirect after token is set
+                } else {
+                    setError('Login failed, no token returned');
                 }
             } else {
                 res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Register', formData);
-                setIsAdminExists(true); // Now admin is registered
-                navigate("/");
+                if (res.data.token) {
+                    setIsAdminExists(true); // Admin is now registered
+                    localStorage.setItem('token', res.data.token); // Save token after registration
+                    navigate("/admin", { replace: true }); // Redirect to the admin page
+                } else {
+                    setError('Registration failed, no token returned');
+                }
             }
         } catch (err) {
             console.error(err);
             setError('Invalid credentials or registration error');
         }
     };
+    
 
     return (
         <div className="flex w-full items-center justify-center min-h-screen bg-gray-100">
