@@ -24,12 +24,12 @@ const App = () => {
 
           <Routes>
             {/* Login Route */}
-            <Route path='/AdminLogin' element={<AdminLogin />} >
+            <Routes path='/AdminLogin' element={<AdminLogin />} >
             
               <Route path="/certificates-requests" element={<CertificatesRequests />} />
               <Route path="/Addworkshop" element={<AddWorkShop />} />
             
-            </Route>
+            </Routes>
 
           </Routes>
         </div>
