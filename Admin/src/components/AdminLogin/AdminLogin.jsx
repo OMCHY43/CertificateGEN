@@ -10,6 +10,13 @@ const AdminLogin = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+
+        if (localStorage.getItem('token')) {
+            navigate("/admin", { replace: true });
+            return;
+        }
+
+        
         const checkAdminExists = async () => {
             try {
                 const res = await axios.get('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check');
