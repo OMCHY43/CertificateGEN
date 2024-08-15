@@ -3,7 +3,7 @@ import Popup from "./ClaimCertificates";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import Loader from "react-loader-spinner"; // Install this or use a custom spinner
+import { ThreeDots } from "react-loader-spinner"; // Updated import
 
 const Certificates = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -95,12 +95,13 @@ const Certificates = () => {
 
         {loading ? (
           <div className="flex justify-center">
-            {/* Use any loading spinner/animation here */}
-            <Loader
-              type="ThreeDots"
+            <ThreeDots
+              height="80"
+              width="80"
+              radius="9"
               color="#00BFFF"
-              height={80}
-              width={80}
+              ariaLabel="three-dots-loading"
+              visible={true}
             />
           </div>
         ) : (
