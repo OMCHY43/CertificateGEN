@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Sidebar from './components/Slidebar/Slidebar';
 import CertificatesRequests from './Pages/CerificatesRequest';
 import AddWorkShop from './Pages/AddWorkShop';
@@ -9,11 +9,12 @@ import AdminLogin from "./components/AdminLogin/AdminLogin.jsx";
 
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const token = localStorage.getItem("token");
 
   return (
     <div className="min-h-screen flex">
       <Router>
-        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        {token && <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
         <div className="flex-grow p-6 bg-gray-100">
           <button
             className="md:hidden text-gray-800 mb-4"
@@ -22,13 +23,14 @@ const App = () => {
             ☰
           </button>
 
-          <Routes> 
-            <Route path='/' element={<AdminLogin />} />
-            
-              <Route path="/certificates-requests" element={<CertificatesRequests />} />
-              <Route path="/Addworkshop" element={<AddWorkShop />} />
-            
-
+          <Routes>
+            {/* Redirect to login if not authenticated */}
+            <Route path="/AdminLogin" element={token ? <Navigate to="/" /> : <AdminLogin />} />
+            {/* Protected routes */}
+            <Route path="/certificates-requests" element={token ? <CertificatesRequests /> : <Navigate to="/AdminLogin" />} />
+            <Route path="/Addworkshop" element={token ? <AddWorkShop /> : <Navigate to="/AdminLogin" />} />
+            {/* Redirect to login if accessing unknown route */}
+            <Route path="*" element={<Navigate to={token ? "/" : "/AdminLogin"} />} />
           </Routes>
         </div>
         <ToastContainer />

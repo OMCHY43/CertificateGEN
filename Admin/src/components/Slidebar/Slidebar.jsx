@@ -2,7 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
+
+  const token = localStorage.getItem("token")
   return (
+
+    <>
+    {token ? (
+
     <div
       className={`fixed inset-y-0 left-0 transform ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
@@ -31,6 +37,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         Logged in as Admin
       </div>
     </div>
+    ) : ( " you dont have permition to access this page")}
+    
+        </>
   );
 };
 
