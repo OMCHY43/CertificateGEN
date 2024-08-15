@@ -23,7 +23,7 @@ const App = () => {
           </button>
 
           <Routes> 
-            <Route path='/AdminLogin' element={<AdminLogin />} />
+            <Route path='/' element={<AdminLogin />} />
             
               <Route path="/certificates-requests" element={<CertificatesRequests />} />
               <Route path="/Addworkshop" element={<AddWorkShop />} />
