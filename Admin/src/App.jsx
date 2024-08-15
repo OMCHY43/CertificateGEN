@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Sidebar from './components/Sidebar/Sidebar';
-import CertificatesRequests from './Pages/CertificatesRequests';
+import Sidebar from './components/Slidebar/Slidebar';
+import CertificatesRequests from './Pages/CerificatesRequest';
 import AddWorkShop from './Pages/AddWorkShop';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
