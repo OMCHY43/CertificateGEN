@@ -7,26 +7,41 @@ import AdminLayout from "./Layout/layout";
 import CertificatesRequests from './Pages/CerificatesRequest';
 import AddWorkShop from './Pages/AddWorkShop';
 
-const App = () => {
+const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
 
+  if (!token) {
+    // If no token, redirect to login page
+    return <Navigate to="/" replace />;
+  }
+
+  // If token exists, allow access
+  return children;
+};
+
+const App = () => {
   return (
     <div className="min-h-screen flex">
       <Router>
         <Routes>
           {/* Admin Login Route */}
-          <Route path="/" element={token ? <Navigate to="/admin/certificates-requests" /> : <AdminLogin />} />
+          <Route path="/" element={<AdminLogin />} />
 
           {/* Protected Admin Routes */}
-          {token && (
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route path="certificates-requests" element={<CertificatesRequests />} />
-              <Route path="addworkshop" element={<AddWorkShop />} />
-            </Route>
-          )}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="certificates-requests" element={<CertificatesRequests />} />
+            <Route path="addworkshop" element={<AddWorkShop />} />
+          </Route>
 
-          {/* Redirect to login if no token */}
-          {!token && <Route path="*" element={<Navigate to="/" replace />} />}
+          {/* Redirect all unmatched routes to login */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <ToastContainer />
       </Router>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,17 +6,22 @@ const AdminLogin = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [isAdminExists, setIsAdminExists] = useState(false);
-    
+    const [hasCheckedAdmin, setHasCheckedAdmin] = useState(false); // Added state to track if admin check has been completed
+
     const navigate = useNavigate();
+    const hasNavigated = useRef(false); // Track if redirection has already occurred
 
     useEffect(() => {
-
+        // If token is present in localStorage, navigate to /admin
         if (localStorage.getItem('token')) {
-            navigate("/admin", { replace: true });
+            if (!hasNavigated.current) { // Prevent multiple redirects
+                hasNavigated.current = true;
+                navigate("/admin", { replace: true });
+            }
             return;
         }
 
-        
+        // Check if admin exists, but only do this once
         const checkAdminExists = async () => {
             try {
                 const res = await axios.get('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check');
@@ -24,11 +29,16 @@ const AdminLogin = () => {
             } catch (err) {
                 console.error(err);
                 setError('Error checking admin existence');
+            } finally {
+                setHasCheckedAdmin(true); // Mark admin check as completed
             }
         };
 
-        checkAdminExists();
-    }, [navigate]);
+        // Call the admin existence check only if it hasn't been done yet
+        if (!hasCheckedAdmin) {
+            checkAdminExists();
+        }
+    }, [navigate, hasCheckedAdmin]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,19 +49,22 @@ const AdminLogin = () => {
         try {
             let res;
             if (isAdminExists) {
+                // If admin exists, login
                 res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Login', formData);
-                const ACCToken = localStorage.setItem('token', res.data.token);
-                console.log(ACCToken);
-                
-                if (ACCToken) {
-                    navigate("/admin"); 
-                }else{
-                    navigate("/")
+            } else {
+                // If admin doesn't exist, register
+                res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Register', formData);
+            }
+
+            // Store the token and navigate to /admin
+            if (res.data.token) {
+                localStorage.setItem('token', res.data.token);
+                if (!hasNavigated.current) { // Prevent multiple redirects
+                    hasNavigated.current = true;
+                    navigate("/admin", { replace: true });
                 }
             } else {
-                res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Register', formData);
-                setIsAdminExists(true); // Now admin is registered
-                navigate("/admin");
+                setError('Error: No token received');
             }
         } catch (err) {
             console.error(err);
@@ -83,7 +96,7 @@ const AdminLogin = () => {
                         <label className="block text-gray-600 text-sm font-semibold mb-2" htmlFor="password">
                             Password
                         </label>
-                        <input 
+                        <input
                             type="password"
                             name="password"
                             placeholder="Enter your password"
