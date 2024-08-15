@@ -1,13 +1,13 @@
-import React from 'react';
-import { useEffect } from 'react';
-import axios from "axios";
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { FaCheck, FaTimes, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 const CertificatesRequests = () => {
-  // Sample data
   const [data, setData] = useState([]);
+
+  // Retrieve the token from local storage
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     async function fetchData() {
@@ -23,11 +23,15 @@ const CertificatesRequests = () => {
     }
 
     fetchData();
-  }, []);
+  }, [token]);
 
   const handleApprove = async (id) => {
     try {
-      const response = await axios.patch(`https://full-stack-bytesminders.onrender.com/api/v1/users/ApproveCertificateRequest/${id}`);
+      const response = await axios.patch(`https://full-stack-bytesminders.onrender.com/api/v1/users/ApproveCertificateRequest/${id}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       if (response) {
         toast.success("User Approved");
       }
@@ -38,7 +42,11 @@ const CertificatesRequests = () => {
 
   const handleDeny = async (id) => {
     try {
-      const response = await axios.patch(`https://full-stack-bytesminders.onrender.com/api/v1/users/DenyCertificateRequest/${id}`);
+      const response = await axios.patch(`https://full-stack-bytesminders.onrender.com/api/v1/users/DenyCertificateRequest/${id}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       if (response) {
         toast.error("User Denied");
       }
@@ -49,7 +57,11 @@ const CertificatesRequests = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`https://full-stack-bytesminders.onrender.com/api/v1/users/DeleteRequest/${id}`);
+      const response = await axios.delete(`https://full-stack-bytesminders.onrender.com/api/v1/users/DeleteRequest/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       if (response) {
         setData(data.filter((request) => request._id !== id)); // Update state to remove the deleted user
         toast.error(`Request deleted`);
@@ -109,7 +121,6 @@ const CertificatesRequests = () => {
       </div>
     </div>
   );
-}
+};
 
 export default CertificatesRequests;
-  

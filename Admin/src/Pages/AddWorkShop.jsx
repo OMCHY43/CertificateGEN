@@ -11,6 +11,9 @@ const AddWorkShop = () => {
   const [workshops, setWorkshops] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Retrieve the token from local storage
+  const token = localStorage.getItem('token');
+
   // Fetch workshops
   useEffect(() => {
     const fetchWorkshops = async () => {
@@ -18,7 +21,7 @@ const AddWorkShop = () => {
       try {
         const response = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop");
         setWorkshops(response.data.data); // Access the array correctly
-        toast.success("data fetched successfully")
+        toast.success("Data fetched successfully");
       } catch (error) {
         setError("Failed to fetch workshops. Please try again.");
       } finally {
@@ -27,7 +30,7 @@ const AddWorkShop = () => {
     };
 
     fetchWorkshops();
-  }, []);
+  }, [token]);
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -40,7 +43,11 @@ const AddWorkShop = () => {
     try {
       if (editingWorkshop) {
         // Update existing workshop
-        const response = await axios.put(`https://full-stack-bytesminders.onrender.com/api/v1/admin/UpdateWorkShop/${editingWorkshop._id}`, workshopData);
+        const response = await axios.put(`https://full-stack-bytesminders.onrender.com/api/v1/admin/UpdateWorkShop/${editingWorkshop._id}`, workshopData, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         if (response.status === 200) {
           setWorkshops(workshops.map((ws) =>
             ws._id === editingWorkshop._id ? { ...ws, ...workshopData } : ws
@@ -50,7 +57,11 @@ const AddWorkShop = () => {
         setEditingWorkshop(null);
       } else {
         // Add new workshop
-        const response = await axios.post("https://full-stack-bytesminders.onrender.com/api/v1/admin/AddWorkShop", workshopData);
+        const response = await axios.post("https://full-stack-bytesminders.onrender.com/api/v1/admin/AddWorkShop", workshopData, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         if (response.status === 201) {
           const newWorkshop = response.data.data;
           setWorkshops([...workshops, newWorkshop]);
@@ -65,7 +76,6 @@ const AddWorkShop = () => {
     }
   };
 
-
   const handleEdit = (workshop) => {
     setEditingWorkshop(workshop);
     setWorkshopName(workshop.WorkShopName);
@@ -75,7 +85,11 @@ const AddWorkShop = () => {
   // Handle deleting a workshop
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://full-stack-bytesminders.onrender.com/api/v1/admin/DeleteWorkShop/${id}`);
+      await axios.delete(`https://full-stack-bytesminders.onrender.com/api/v1/admin/DeleteWorkShop/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       setWorkshops(workshops.filter((ws) => ws._id !== id));
       setSuccess("Workshop deleted successfully!");
     } catch (error) {
@@ -118,7 +132,7 @@ const AddWorkShop = () => {
               value={fromClosing}
               onChange={(e) => setFromClosing(e.target.value)}
               required
-              disabled={loading} 
+              disabled={loading}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
@@ -161,14 +175,14 @@ const AddWorkShop = () => {
                       <button
                         onClick={() => handleEdit(workshop)}
                         className="text-indigo-600 hover:text-indigo-900 mr-4"
-                        disabled={loading} 
+                        disabled={loading}
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(workshop._id)}
                         className="text-red-600 hover:text-red-900"
-                        disabled={loading} 
+                        disabled={loading}
                       >
                         Delete
                       </button>
