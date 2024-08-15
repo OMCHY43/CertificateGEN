@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { ThreeDots } from "react-loader-spinner"; // Optional: loader spinner if needed
 
 const Popup = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [workshops, setWorkshops] = useState([]);
   const [selectedWorkshop, setSelectedWorkshop] = useState(""); // To store the selected workshop
+  const [loading, setLoading] = useState(false); // Loading state for form submission
+  const [error, setError] = useState(""); // Error state to handle any issues
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading on form submission
+    setError(""); // Reset any previous errors
 
     try {
       const response = await axios.post(
@@ -31,7 +36,9 @@ const Popup = ({ onClose }) => {
 
     } catch (error) {
       console.error("Error claiming certificate", error);
-      // Handle error (e.g., notify the user about the error)
+      setError("Failed to claim certificate. Please check your details and try again.");
+    } finally {
+      setLoading(false); // End loading after form submission
     }
   };
 
@@ -54,7 +61,7 @@ const Popup = ({ onClose }) => {
         }
       } catch (error) {
         console.error("Error fetching workshops:", error);
-        // Handle error if necessary
+        setError("Failed to fetch workshops.");
       }
     }
     fetchData();
@@ -87,9 +94,13 @@ const Popup = ({ onClose }) => {
               </option>
             ))}
           </select>
+
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>} {/* Display error */}
+          
           <p className="text-red-500 text-xs mt-2">
             If facing any issues: Contact Admin of your WhatsApp Group.
           </p>
+
           <div className="mt-4 flex justify-end space-x-2">
             <button
               type="button"
@@ -98,8 +109,23 @@ const Popup = ({ onClose }) => {
             >
               Close
             </button>
-            <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded-lg">
-              Claim Now
+            <button
+              type="submit"
+              className="bg-green-500 text-white py-2 px-4 rounded-lg"
+              disabled={loading} // Disable button while loading
+            >
+              {loading ? (
+                <ThreeDots
+                  height="30"
+                  width="30"
+                  radius="9"
+                  color="#FFF"
+                  ariaLabel="three-dots-loading"
+                  visible={true}
+                />
+              ) : (
+                "Claim Now"
+              )}
             </button>
           </div>
         </form>
