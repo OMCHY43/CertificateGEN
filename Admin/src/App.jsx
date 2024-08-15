@@ -3,11 +3,10 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Sidebar from './components/Slidebar/Slidebar';
 import CertificatesRequests from './Pages/CerificatesRequest';
 import AddWorkShop from './Pages/AddWorkShop';
-import AdminLayout from "./Layout/layout";
+import AdminLayout from "./Layout/layout"
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AdminLogin from "./components/AdminLogin/AdminLogin";
-import PrivateRoute from './components/PrivateRoute'; // For protecting routes
 
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -16,25 +15,24 @@ const App = () => {
   return (
     <div className="min-h-screen flex">
       <Router>
-        <div className="flex-grow p-6 bg-gray-100">
-          <Routes>
-            {/* Public Route - Admin Login */}
-            <Route path="/" element={<AdminLogin />} />
-
-            {/* Protected Admin Routes */}
-            <Route path="/admin" element={<PrivateRoute token={token}><AdminLayout /></PrivateRoute>}>
-              <Route path="certificates-requests" element={<CertificatesRequests />} />
-              <Route path="Addworkshop" element={<AddWorkShop />} />
-            </Route>
-
-            {/* Redirect to login if no match */}
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </div>
-
-        {/* Sidebar visible only if token exists */}
+        {/* Only show sidebar if token exists */}
         {token && <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
 
+        <div className="flex-grow p-6 bg-gray-100">
+          <button
+            className="md:hidden text-gray-800 mb-4"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            ☰
+          </button>
+
+          <Routes>
+            <Route path="/" element={<AdminLogin />} />
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route path="certificates-requests" element={<CertificatesRequests />} />
+            </Route>
+          </Routes>
+        </div>
         <ToastContainer />
       </Router>
     </div>

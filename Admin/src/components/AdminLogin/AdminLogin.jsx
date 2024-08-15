@@ -13,7 +13,7 @@ const AdminLogin = () => {
         const checkAdminExists = async () => {
             try {
                 const res = await axios.get('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check');
-                setIsAdminExists(res.data.exist);  
+                setIsAdminExists(res.data.exist);
             } catch (err) {
                 console.error(err);
                 setError('Error checking admin existence');
@@ -33,8 +33,10 @@ const AdminLogin = () => {
             let res;
             if (isAdminExists) {
                 res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Login', formData);
-                localStorage.setItem('token', res.data.token); // Store the token first
-                navigate("/admin/certificates-requests"); // Then navigate
+                const ACCToken = localStorage.setItem('token', res.data.token); 
+                if (ACCToken) {
+                    navigate("/admin/certificates-requests"); 
+                }
             } else {
                 res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Register', formData);
                 setIsAdminExists(true); // Now admin is registered
