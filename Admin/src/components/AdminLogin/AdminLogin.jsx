@@ -14,7 +14,9 @@ const AdminLogin = () => {
         const checkAdminExists = async () => {
             try {
                 const res = await axios.get('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check');
-                setIsAdminExists(res.data.exists);  // use corrected "exists" key
+                console.log(res);
+                
+                setIsAdminExists(res.data.data.exists);  // use corrected "exists" key
             } catch (err) {
                 console.error(err);
             }
