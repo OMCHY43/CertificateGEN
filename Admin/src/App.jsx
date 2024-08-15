@@ -27,7 +27,7 @@ const App = () => {
             <Route path="/AdminLogin" element={AdminLogin} />
             <Route path="/certificates-requests" element={<CertificatesRequests /> } />
             <Route path="/AddWorkShop" element={<AddWorkShop /> } />
-            <Route path="/" element={<Sidebar/>} />
+            <Route path="/" element={<Navigate to={token ? (<Sidebar/>) : ("/AdminLogin") } />  } />
             <Route path="*" element={<Navigate to={token ? "/certificates-requests" : "/AdminLogin"} />} />
           </Routes>
         </div>
