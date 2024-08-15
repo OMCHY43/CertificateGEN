@@ -6,10 +6,10 @@ import {Admin} from "../models/AdminLogin.model.js"
 
 const AdminLogin = asyncHandler(async(req,res)=>{
 
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     
     try {
-        const admin = await Admin.findOne({ username });
+        const admin = await Admin.findOne({ email });
         if (!admin) return res.status(400).json({ message: 'Invalid username' });
 
         const isMatch = await bcrypt.compare(password, admin.password);
