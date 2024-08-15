@@ -9,6 +9,6 @@ router.route("/AllRequest").get(GetAllReq);
 router.route("/ClaimCertificates").post(ClaimCertificates); 
 router.route("/ApproveCertificateRequest/:id").patch(AdminAuth ,ApproveCertificateRequest);
 router.route("/DenyCertificateRequest/:id").patch(AdminAuth , DenyCertificateRequest);
-router.route("/DeleteRequest/:id").delete(AdminAuth , DenyCertificateRequest);
+router.route("/DeleteRequest/:id").delete(AdminAuth , DeleteRequest);
 
 export default router;

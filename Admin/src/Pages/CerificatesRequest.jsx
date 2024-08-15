@@ -49,7 +49,7 @@ const CertificatesRequests = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`https://full-stack-bytesminders.onrender.com/api/v1/users/DenyCertificateRequest/${id}`);
+      const response = await axios.delete(`https://full-stack-bytesminders.onrender.com/api/v1/users/DeleteRequest/${id}`);
       if (response) {
         setData(data.filter((request) => request._id !== id)); // Update state to remove the deleted user
         toast.error(`Request deleted`);
