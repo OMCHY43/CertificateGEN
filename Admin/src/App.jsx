@@ -5,7 +5,7 @@ import CertificatesRequests from './Pages/CerificatesRequest';
 import AddWorkShop from './Pages/AddWorkShop';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ProtectedRoute from './components/ProtectedRoute';  // Import your ProtectedRoute component
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoutes.jsx';  // Import your ProtectedRoute component
 
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
