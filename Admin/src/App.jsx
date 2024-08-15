@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AdminLogin from "./components/AdminLogin/AdminLogin";
@@ -20,6 +20,7 @@ const App = () => {
           {/* Protected Admin Routes */}
           {token && (
             <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Navigate to="certificates-requests" />} /> {/* Default route */}
               <Route path="certificates-requests" element={<CertificatesRequests />} />
               <Route path="addworkshop" element={<AddWorkShop />} />
             </Route>
