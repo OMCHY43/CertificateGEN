@@ -33,7 +33,7 @@ const App = () => {
 
           <Routes>
             {/* Admin Login Route */}
-            <Route path="/" element={<AdminLogin />} />
+            <Route path="/" element={token ? <Navigate to="/admin/certificates-requests" /> : <AdminLogin />} />
 
             {/* Admin Routes (Protected) */}
             {token ? (
