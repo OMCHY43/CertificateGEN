@@ -35,14 +35,14 @@ const AdminLogin = () => {
                 res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Login', formData);
                 const ACCToken = localStorage.setItem('token', res.data.token); 
                 if (ACCToken) {
-                    navigate("/admin"); 
+                    navigate("/"); 
                 }else{
                     navigate("/")
                 }
             } else {
                 res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Register', formData);
                 setIsAdminExists(true); // Now admin is registered
-                navigate("/admin");
+                navigate("/");
             }
         } catch (err) {
             console.error(err);
