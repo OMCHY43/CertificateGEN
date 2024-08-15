@@ -56,6 +56,10 @@ const Popup = ({ onClose }) => {
         const response = await axios.get(
           "https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop"
         );
+
+        if(response.status === 403){
+          alert("You are not approved")
+        }
         if (response.data.data) {
           setWorkshops(response.data.data);
         }
