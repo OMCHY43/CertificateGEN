@@ -22,14 +22,12 @@ const App = () => {
             ☰
           </button>
 
-          <Routes>
-            {/* Login Route */}
-            <Routes path='/AdminLogin' element={<AdminLogin />} >
+          <Routes> 
+            <Route path='/AdminLogin' element={<AdminLogin />} />
             
               <Route path="/certificates-requests" element={<CertificatesRequests />} />
               <Route path="/Addworkshop" element={<AddWorkShop />} />
             
-            </Routes>
 
           </Routes>
         </div>
