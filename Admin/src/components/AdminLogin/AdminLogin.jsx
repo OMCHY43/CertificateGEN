@@ -74,7 +74,7 @@ const AdminLogin = () => {
                         <label className="block text-gray-600 text-sm font-semibold mb-2" htmlFor="password">
                             Password
                         </label>
-                        <input
+                        <input 
                             type="password"
                             name="password"
                             placeholder="Enter your password"
