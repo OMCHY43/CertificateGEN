@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/Slidebar/Slidebar';
 import CertificatesRequests from './Pages/CerificatesRequest';
 import AddWorkShop from './Pages/AddWorkShop';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import ProtectedRoute from './components/ProtectedRoute';  // Import your ProtectedRoute component
 
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -21,15 +21,31 @@ const App = () => {
           >
             ☰
           </button>
+
           <Routes>
-            <Route path="/certificates-requests" element={<CertificatesRequests />} />
-            <Route path='/Addworkshop' element={<AddWorkShop/>} />
+            {/* Wrap protected routes with ProtectedRoute */}
+            <Route
+              path="/certificates-requests"
+              element={
+                <ProtectedRoute>
+                  <CertificatesRequests />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/Addworkshop"
+              element={
+                <ProtectedRoute>
+                  <AddWorkShop />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </div>
         <ToastContainer />
       </Router>
     </div>
   );
-}
+};
 
 export default App;
