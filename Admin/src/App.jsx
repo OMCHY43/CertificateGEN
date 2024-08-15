@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Sidebar from './components/Sidebar/Sidebar';
+import Sidebar from './components/Slidebar/Slidebar';
 import CertificatesRequests from './Pages/CertificatesRequests';
 import AddWorkShop from './Pages/AddWorkShop';
 import { ToastContainer } from 'react-toastify';
