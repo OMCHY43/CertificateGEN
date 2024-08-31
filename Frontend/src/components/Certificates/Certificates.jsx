@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { ThreeDots } from "react-loader-spinner"; // Updated import
+import StateData from "./States.json"
 
 const Certificates = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -14,6 +15,7 @@ const Certificates = () => {
     state: "",
     Workshop: "",
   });
+  const [states, setstates] = useState([])
   const [workshops, setWorkshops] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false); // Loading state
@@ -30,6 +32,10 @@ const Certificates = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
+  useEffect(() => {
+    setstates(StateData)
+  }, [])
 
   useEffect(() => {
     async function fetchData() {
@@ -70,7 +76,13 @@ const Certificates = () => {
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      setError("Error submitting the form. Please try again.");
+      if (error.response.status === 409) {
+        setError(error.response.data.data.error);
+        toast.error(error.response.data.data.error)
+      } else {
+        setError("Error submitting the form. Please try again.");
+        toast.error("Error submitting the form. Please try again.");
+      }
     } finally {
       setLoading(false); // End loading
     }
@@ -119,10 +131,11 @@ const Certificates = () => {
                 onChange={handleChange}
                 value={formData.phone}
                 name="phone"
-                type="text"
+                type="number"
                 placeholder="Phone Number"
                 className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
               />
+
               <select
                 onChange={handleChange}
                 value={formData.state}
@@ -130,9 +143,11 @@ const Certificates = () => {
                 className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
               >
                 <option>Select State</option>
-                <option>Bihar</option>
-                <option>West Bengal</option>
-                <option>Goa</option>
+                {states.map((state, index) => (
+                  <option key={index} value={state}>
+                    {state}
+                  </option>
+                ))}
               </select>
             </div>
             <input
