@@ -51,6 +51,8 @@ const AdminLogin = () => {
             if (isAdminExists) {
                 // If admin exists, login
                 res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Login', formData);
+                console.log(res);
+                
             } else {
                 // If admin doesn't exist, register
                 res = await axios.post('https://full-stack-bytesminders.onrender.com/api/v1/Admin/Register', formData);
