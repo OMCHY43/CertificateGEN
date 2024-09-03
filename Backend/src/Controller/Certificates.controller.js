@@ -7,15 +7,20 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { PDFDocument, rgb } from "pdf-lib";
 import * as fontkit from 'fontkit';
+import { WorkShop } from "../models/AddWorkShop.model.js";
 
 
 const Register = asyncHandler(async (req, res) => {
-  try {
-    const { FullName, phone, email, Workshop, state } = req.body;
 
-    if ([FullName, phone, email, Workshop, state].some(field => !field.trim())) {
+
+  try {
+    const { FullName, phone, email, Workshop, state, WorkShopid } = req.body;
+
+    if ([FullName, phone, email, Workshop, state, WorkShopid].some(field => !field.trim())) {
       throw new ApiError(400, 'All fields are required');
     }
+
+
 
     console.log('Searching for email:', email);
 
@@ -30,12 +35,20 @@ const Register = asyncHandler(async (req, res) => {
       throw new ApiError(409, 'Your request is already submitted');
     }
 
+    const expired = await WorkShop.findById(WorkShopid);
+    if (expired.status === "closed") {
+      throw new ApiError(400, "Form is closed now")
+    }
+
+
+
     const CreatedData = await FormData.create({
       FullName,
       email: normalizedEmail,
       phone,
       Workshop,
       state,
+      WorkShopid
     });
 
     if (!CreatedData) {
@@ -90,16 +103,16 @@ const ApproveCertificateRequest = asyncHandler(async (req, res) => {
 // Claim certificate
 const ClaimCertificates = asyncHandler(async (req, res) => {
   try {
-    const { email , Workshop } = req.body;
-    const user = await FormData.findOne({ email , Workshop });
+    const { email, Workshop } = req.body;
+    const user = await FormData.findOne({ email, Workshop });
     const MatchWorkshop = await FormData.findOne({ Workshop });
-    
+
     if (!user) {
       throw new ApiError(400, 'No request found');
     }
-    
-    if(!MatchWorkshop){
-      throw new ApiResponse(400 , null , "Please selecet Your correct workshop Name")
+
+    if (!MatchWorkshop) {
+      throw new ApiResponse(400, null, "Please selecet Your correct workshop Name")
     }
 
     if (user.CertificatesStatus !== 'approved') {
@@ -119,8 +132,8 @@ const ClaimCertificates = asyncHandler(async (req, res) => {
     const pages = pdfDoc.getPages();
     const firstPage = pages[0];
 
-    const x = 320; 
-    const y = 270; 
+    const x = 320;
+    const y = 270;
     const fontSize = 30;
     const Name = user.FullName || 'test';
 
@@ -135,7 +148,7 @@ const ClaimCertificates = asyncHandler(async (req, res) => {
       x: x,
       y: y,
       size: fontSize,
-      color: rgb(0.85, 0.65, 0.13), 
+      color: rgb(0.85, 0.65, 0.13),
       font: font,
     });
 
@@ -185,13 +198,36 @@ const DenyCertificateRequest = asyncHandler(async (req, res) => {
 
 
 const DeleteRequest = asyncHandler(async (req, res) => {
- const {id} = req.params ;
+  const { id } = req.params;
 
- const Delete = await FormData.findByIdAndDelete(id) ;
+  const Delete = await FormData.findByIdAndDelete(id);
 
- return res.json(new ApiResponse(200 , null , " Request Deleted"))
+  return res.json(new ApiResponse(200, null, " Request Deleted"))
 })
 
+const acceptAllreq = asyncHandler(async (req, res) => {
+  try {
+
+    const allReq = await FormData.updateMany({}, { CertificatesStatus: "approved" });
+
+    res.json(new ApiResponse(200, allReq, "all request is accepted"))
+  } catch (error) {
+    res.json(new ApiError(401, "something went wrong"))
+  }
+});
+
+const deniedAllreq = asyncHandler(async (req, res) => {
+  const allReq = await FormData.updateMany({}, { CertificatesStatus: "denied" });
+
+  res.json(new ApiResponse(200, allReq, "all request is denied"))
+
+});
+
+const deleteAllReq = asyncHandler(async (req, res) => {
+  const allReq = await FormData.deleteMany({});
+
+  res.json(new ApiResponse(200, allReq, "all request is deleted"))
+});
 
 export {
   Register,
@@ -199,5 +235,8 @@ export {
   ApproveCertificateRequest,
   DenyCertificateRequest,
   DeleteRequest,
-  ClaimCertificates
+  ClaimCertificates,
+  acceptAllreq,
+  deniedAllreq,
+  deleteAllReq,
 };

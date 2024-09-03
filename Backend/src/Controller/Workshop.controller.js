@@ -17,13 +17,16 @@ const AddWorkShop = asyncHandler(async (req, res) => {
   }
 
   try {
-    const addworkshop = await WorkShop.create({ WorkShopName, FromClosing });
+    // Create the workshop
+    const addworkshop = await WorkShop.create({ WorkShopName, FromClosing , status: 'active'});
 
     const currentDate = getCurrentDateString();
 
-    if (currentDate === FromClosing) {
+    // Check if the current date matches the closing date
+    if (currentDate === FromClosing.split('T')[0]) {
+      await WorkShop.findByIdAndUpdate(addworkshop._id, { status: 'closed' });
       return res.json(
-        new ApiResponse(400, null, "Workshop has been ended")
+        new ApiResponse(400, null, "form has been closed")
       );
     }
 
@@ -43,24 +46,26 @@ const UpdateWorkShop = asyncHandler(async (req, res) => {
 
   const currentDate = getCurrentDateString();
 
-  const updateWorkshop = await WorkShop.findByIdAndUpdate(
-    id,
-    { WorkShopName, FromClosing },
-    { new: true, runValidators: true }
-  );
-
-  if (currentDate === FromClosing) {
-    return res.json(
-      new ApiResponse(400, null, "Workshop has been ended")
-    );
-  }
+  const updateWorkshop = await WorkShop.findById(id);
 
   if (!updateWorkshop) {
     return res.status(404).json({ message: 'Workshop not found' });
   }
-  
+
+  // Update workshop
+  updateWorkshop.WorkShopName = WorkShopName;
+  updateWorkshop.FromClosing = FromClosing;
+
+  // Check if the current date matches the closing date
+  if (currentDate === FromClosing.split('T')[0]) {
+    updateWorkshop.status = 'closed';
+  }
+
+  await updateWorkshop.save();
+
   res.status(200).json(updateWorkshop);
 });
+
 
 const DeleteWorkShop = asyncHandler(async (req, res) => {
     const { id } = req.params;

@@ -3,8 +3,8 @@ import Popup from "./ClaimCertificates";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { ThreeDots } from "react-loader-spinner"; // Updated import
-import StateData from "./States.json"
+import { ThreeDots } from "react-loader-spinner";
+import StateData from "./States.json";
 
 const Certificates = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -14,11 +14,12 @@ const Certificates = () => {
     phone: "",
     state: "",
     Workshop: "",
+    WorkShopid: "",
   });
-  const [states, setstates] = useState([])
+  const [states, setstates] = useState([]);
   const [workshops, setWorkshops] = useState([]);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
 
   const openPopup = () => {
     setIsPopupOpen(true);
@@ -33,16 +34,29 @@ const Certificates = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  // Handle workshop selection separately
+  const handleWorkshopChange = (e) => {
+    const selectedOption = e.target.options[e.target.selectedIndex];
+    const workshopName = selectedOption.text;
+    const workshopId = selectedOption.value;
+
+    setFormData({
+      ...formData,
+      Workshop: workshopName,
+      WorkShopid: workshopId,
+    });
+  };
+
   useEffect(() => {
-    setstates(StateData)
-  }, [])
+    setstates(StateData);
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
-      setLoading(true); // Start loading
+      setLoading(true);
       try {
         const response = await axios.get(
-          "https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop"
+          "http://localhost:5000/api/v1/admin/GetAllWorkShop"
         );
         console.log(response);
         if (response.data.data) {
@@ -52,7 +66,7 @@ const Certificates = () => {
         console.error("Error fetching workshops:", error);
         setError("Failed to fetch workshops.");
       } finally {
-        setLoading(false); // End loading
+        setLoading(false);
       }
     }
     fetchData();
@@ -61,10 +75,10 @@ const Certificates = () => {
   const SubmitData = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true); // Start loading on form submit
+    setLoading(true);
     try {
       const response = await axios.post(
-        "https://full-stack-bytesminders.onrender.com/api/v1/users/Register",
+        "http://localhost:5000/api/v1/users/Register",
         formData
       );
       console.log("Response:", response);
@@ -76,15 +90,19 @@ const Certificates = () => {
       }
     } catch (error) {
       console.error("Error submitting form:", error);
+
       if (error.response.status === 409) {
         setError(error.response.data.data.error);
-        toast.error(error.response.data.data.error)
-      } else {
+        toast.error(error.response.data.data.error);
+      }else if(error.response.status === 400){
+        toast.error("from is now closed")
+      } 
+      else {
         setError("Error submitting the form. Please try again.");
         toast.error("Error submitting the form. Please try again.");
       }
     } finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 
@@ -159,14 +177,14 @@ const Certificates = () => {
               className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
             />
             <select
-              onChange={handleChange}
-              value={formData.Workshop}
+              onChange={handleWorkshopChange} // Use the separate handler
+              value={formData.WorkShopid} // Bind to WorkShopid only for value
               name="Workshop"
               className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
             >
-              <option>Select Workshop</option>
+              <option value="">Select Workshop</option>
               {workshops.map((item) => (
-                <option key={item._id} value={item.WorkShopName}>
+                <option key={item._id} value={item._id}>
                   {item.WorkShopName}
                 </option>
               ))}

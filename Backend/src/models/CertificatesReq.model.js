@@ -25,9 +25,8 @@ const FormSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  FormClosing: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'WorkShop', // Ensure this matches the model name
+  WorkShopid: {
+    type: String ,
   },
   Workshop: {
     type: String,

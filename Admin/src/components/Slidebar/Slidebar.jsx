@@ -1,12 +1,10 @@
 import React from 'react';
+
 import { Link } from 'react-router-dom';
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
-  const token = localStorage.getItem("token");
+  
 
-  if (!token) {
-    return null; // Hide sidebar completely if no token
-  }
 
   return (
     <div
@@ -30,7 +28,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           className="block px-4 py-2 hover:bg-blue-700"
           onClick={() => setSidebarOpen(false)}
         >
-          Addworkshop
+          Add Workshop
         </Link>
       </nav>
       <div className="p-4 text-sm border-t border-blue-700">

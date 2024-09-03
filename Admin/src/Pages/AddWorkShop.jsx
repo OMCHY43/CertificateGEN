@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from 'react-router-dom';
 
 const AddWorkShop = () => {
   const [workshopName, setWorkshopName] = useState("");
@@ -10,17 +11,20 @@ const AddWorkShop = () => {
   const [editingWorkshop, setEditingWorkshop] = useState(null);
   const [workshops, setWorkshops] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  // Retrieve the token from local storage
-  const token = localStorage.getItem('token');
-
-  // Fetch workshops
   useEffect(() => {
     const fetchWorkshops = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop");
-        setWorkshops(response.data.data); // Access the array correctly
+        const response = await axios.get("http://localhost:5000/api/v1/admin/GetAllWorkShop", {
+          withCredentials: true, // Ensure cookies are sent with the request
+        });
+        const DATA = response.data.data 
+        console.log(DATA);
+        
+        const activeWorkshops = DATA.filter(workshop => workshop.status === 'active');
+        setWorkshops(activeWorkshops);
         toast.success("Data fetched successfully");
       } catch (error) {
         setError("Failed to fetch workshops. Please try again.");
@@ -30,9 +34,8 @@ const AddWorkShop = () => {
     };
 
     fetchWorkshops();
-  }, [token]);
+  }, []);
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -43,30 +46,22 @@ const AddWorkShop = () => {
     try {
       if (editingWorkshop) {
         // Update existing workshop
-        const response = await axios.put(`https://full-stack-bytesminders.onrender.com/api/v1/admin/UpdateWorkShop/${editingWorkshop._id}`, workshopData, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+        const response = await axios.put(`http://localhost:5000/api/v1/admin/UpdateWorkShop/${editingWorkshop._id}`, workshopData, {
+          withCredentials: true, // Ensure cookies are sent with the request
         });
-        if (response.status === 200) {
-          setWorkshops(workshops.map((ws) =>
-            ws._id === editingWorkshop._id ? { ...ws, ...workshopData } : ws
-          ));
-          setSuccess("Workshop updated successfully!");
-        }
+        setWorkshops(workshops.map((ws) =>
+          ws._id === editingWorkshop._id ? { ...ws, ...workshopData } : ws
+        ));
+        setSuccess("Workshop updated successfully!");
         setEditingWorkshop(null);
       } else {
         // Add new workshop
-        const response = await axios.post("https://full-stack-bytesminders.onrender.com/api/v1/admin/AddWorkShop", workshopData, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+        const response = await axios.post("http://localhost:5000/api/v1/admin/AddWorkShop", workshopData, {
+          withCredentials: true, // Ensure cookies are sent with the request
         });
-        if (response.status === 201) {
-          const newWorkshop = response.data.data;
-          setWorkshops([...workshops, newWorkshop]);
-          setSuccess("Workshop added successfully!");
-        }
+        const newWorkshop = response.data.data;
+        setWorkshops([...workshops, newWorkshop]);
+        setSuccess("Workshop added successfully!");
       }
     } catch (error) {
       setError(error.response?.data?.message || "Failed to process request. Please try again.");
@@ -82,13 +77,10 @@ const AddWorkShop = () => {
     setFromClosing(workshop.FromClosing);
   };
 
-  // Handle deleting a workshop
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://full-stack-bytesminders.onrender.com/api/v1/admin/DeleteWorkShop/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      await axios.delete(`http://localhost:5000/api/v1/admin/DeleteWorkShop/${id}`, {
+        withCredentials: true, // Ensure cookies are sent with the request
       });
       setWorkshops(workshops.filter((ws) => ws._id !== id));
       setSuccess("Workshop deleted successfully!");
@@ -98,10 +90,10 @@ const AddWorkShop = () => {
   };
 
   if (loading) return <p>Loading...</p>;
-  
+
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-100 p-4">
-      <div className="w-full  bg-white p-6 rounded-lg shadow-lg">
+      <div className="w-full bg-white p-6 rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold mb-4">
           {editingWorkshop ? "Edit Workshop" : "Add New Workshop"}
         </h1>
@@ -118,7 +110,7 @@ const AddWorkShop = () => {
               value={workshopName}
               onChange={(e) => setWorkshopName(e.target.value)}
               required
-              disabled={loading} // Disable input when loading
+              disabled={loading}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
