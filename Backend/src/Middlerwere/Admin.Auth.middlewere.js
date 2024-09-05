@@ -1,17 +1,15 @@
-
 import jwt from "jsonwebtoken";
 
 const AdminAuth = (req, res, next) => {
-  // Get the token from cookies
   try {
-  const token = req.cookies.token;
+    const token = req.cookies.token;
 
-  if (!token) {
-    return res.status(401).json({ message: "No token, authorization denied" });
-  }
+    if (!token) {
+      return res.status(401).json({ message: "No token, authorization denied" });
+    }
 
+    // Verify the token
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
-
     req.admin = decoded;
 
     next();

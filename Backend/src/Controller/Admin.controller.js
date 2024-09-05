@@ -3,6 +3,11 @@ import jwt from "jsonwebtoken";
 import { Admin } from "../models/AdminLogin.model.js";
 
 // Admin Login
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { Admin } from "../models/AdminLogin.model.js";
+
+// Admin Login (Production Version)
 const AdminLogin = async (req, res) => {
   const { email, password } = req.body;
 
@@ -20,19 +25,20 @@ const AdminLogin = async (req, res) => {
     // Generate the token
     const token = jwt.sign({ id: admin._id }, process.env.ACCESS_TOKEN, { expiresIn: '24h' });
 
-    // Set the cookie
+    // Set the cookie for production (secure & sameSite set for production)
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Adjust based on environment
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      secure: true,             // Set secure to true in production to use HTTPS
+      sameSite: 'strict',        // SameSite set to strict for CSRF protection
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
 
-    res.status(200).json({ message: 'Login successful', token });
+    res.status(200).json({ message: 'Login successful' });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
 
 // Admin Registration
 const AdminRegister = async (req, res) => {
@@ -56,19 +62,20 @@ const AdminRegister = async (req, res) => {
     // Generate a token
     const token = jwt.sign({ id: newAdmin._id }, process.env.ACCESS_TOKEN, { expiresIn: '24h' });
 
-    // Set the cookie
+    // Set the cookie for production
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production" ,
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
-      maxAge: 24 * 60 * 60 * 1000,
+      secure: true,             // Set secure to true in production for HTTPS
+      sameSite: 'strict',        // Set SameSite to strict for CSRF protection
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
 
-    res.status(200).json({ message: "Admin registered successfully", token });
+    res.status(200).json({ message: "Admin registered successfully" });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
 
 // Check if admin exists
 const AdminCheck = async (req, res) => {
