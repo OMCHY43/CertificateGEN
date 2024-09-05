@@ -9,7 +9,7 @@ const Verifyed = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await axios.get(`http://localhost:5000/api/v1/users/Verify/${id}`);
+      const response = await axios.get(`https://full-stack-bytesminders.onrender.com/api/v1/users/Verify/${id}`);
       console.log(response);
       if (response.data && response.data.data.certificate.length > 0) {
         setCertificateData(response.data.data.certificate[0]); // Access the first certificate object

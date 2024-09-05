@@ -56,7 +56,7 @@ const Certificates = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/v1/admin/GetAllWorkShop"
+          "https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop"
         );
         console.log(response);
         if (response.data.data) {
@@ -78,7 +78,7 @@ const Certificates = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/v1/users/Register",
+        "https://full-stack-bytesminders.onrender.com/api/v1/users/Register",
         formData
       );
       console.log("Response:", response);

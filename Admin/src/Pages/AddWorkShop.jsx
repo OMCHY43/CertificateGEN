@@ -18,7 +18,7 @@ const AddWorkShop = () => {
     const fetchWorkshops = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:5000/api/v1/admin/GetAllWorkShop", {
+        const response = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop", {
           withCredentials: true,
         });
         const DATA = response.data.data;
@@ -47,7 +47,7 @@ const AddWorkShop = () => {
     try {
       if (editingWorkshop) {
         // Update existing workshop
-        const response = await axios.put(`http://localhost:5000/api/v1/admin/UpdateWorkShop/${editingWorkshop._id}`, workshopData, {
+        const response = await axios.put(`https://full-stack-bytesminders.onrender.com/api/v1/admin/UpdateWorkShop/${editingWorkshop._id}`, workshopData, {
           withCredentials: true,
         });
         setWorkshops(workshops.map((ws) =>
@@ -57,7 +57,7 @@ const AddWorkShop = () => {
         setEditingWorkshop(null);
       } else {
         // Add new workshop
-        const response = await axios.post("http://localhost:5000/api/v1/admin/AddWorkShop", workshopData, {
+        const response = await axios.post("https://full-stack-bytesminders.onrender.com/api/v1/admin/AddWorkShop", workshopData, {
           withCredentials: true,
         });
         const newWorkshop = response.data.data;
@@ -82,7 +82,7 @@ const AddWorkShop = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/v1/admin/DeleteWorkShop/${id}`, {
+      await axios.delete(`https://full-stack-bytesminders.onrender.com/api/v1/admin/DeleteWorkShop/${id}`, {
         withCredentials: true,
       });
       setWorkshops(workshops.filter((ws) => ws._id !== id));

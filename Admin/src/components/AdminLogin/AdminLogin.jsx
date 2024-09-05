@@ -13,11 +13,11 @@ const AdminLogin = () => {
   useEffect(() => {
     const checkAdminAndToken = async () => {
       try {
-        const adminRes = await axios.get("http://localhost:5000/api/v1/Admin/Check");
+        const adminRes = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check");
         setIsAdminExists(adminRes.data.exist);
 
         // Call the CheckToken endpoint to verify token existence
-        const tokenRes = await axios.get("http://localhost:5000/api/v1/Admin/CheckToken", {
+        const tokenRes = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/Admin/CheckToken", {
           withCredentials: true,
         });
 
@@ -53,7 +53,7 @@ const AdminLogin = () => {
       if (isAdminExists) {
         // If admin exists, login
         res = await axios.post(
-          "http://localhost:5000/api/v1/Admin/Login",
+          "https://full-stack-bytesminders.onrender.com/api/v1/Admin/Login",
           formData,
           { withCredentials: true }
         );
@@ -64,7 +64,7 @@ const AdminLogin = () => {
       } else {
         // If admin doesn't exist, register
         res = await axios.post(
-          "http://localhost:5000/api/v1/Admin/Register",
+          "https://full-stack-bytesminders.onrender.com/api/v1/Admin/Register",
           formData,
           { withCredentials: true }
         );

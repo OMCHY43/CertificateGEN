@@ -9,7 +9,7 @@ const ProtectedRoute = ({ children }) => {
     const verifyToken = async () => {
       try {
         // Make a request to the backend to verify the token
-        const response = await axios.get("http://localhost:5000/api/v1/Admin/CheckToken", {
+        const response = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/Admin/CheckToken", {
           withCredentials: true, 
         });
 
