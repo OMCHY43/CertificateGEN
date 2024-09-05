@@ -13,36 +13,29 @@ const AdminLogin = () => {
   useEffect(() => {
     const checkAdminAndToken = async () => {
       try {
-        // If no token, check if admin exists
         const adminRes = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check");
         setIsAdminExists(adminRes.data.exist);
-        // Call CheckToken endpoint first to verify token existence
+
+        // Call the CheckToken endpoint to verify token existence
         const tokenRes = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/Admin/CheckToken", {
           withCredentials: true,
         });
-  
+
         if (tokenRes.status === 200 && tokenRes.data.token) {
           console.log('Token found, redirecting to /admin');
           navigate("/admin", { replace: true });
           return; // Stop further execution if token is present
         }
 
-        // Example to set the token cookie client-side (if server doesn't handle it):
-if (res.data.token) {
-  Cookies.set('token', res.data.token, { secure: true, sameSite: 'strict' });
-}
-
-  
-  
+      
       } catch (err) {
         console.error(err);
-        setError("Error checking admin or token");
+        setError("Error checking or token");
       }
     };
-  
+
     checkAdminAndToken();
   }, [navigate]);
-  
 
 
 
@@ -54,7 +47,7 @@ if (res.data.token) {
     e.preventDefault();
     setLoading(true);
     setError(""); // Clear previous errors
-  
+
     try {
       let res;
       if (isAdminExists) {
@@ -64,7 +57,10 @@ if (res.data.token) {
           formData,
           { withCredentials: true }
         );
-        console.log("Login Response:", res);
+        console.log(res);
+        
+        
+
       } else {
         // If admin doesn't exist, register
         res = await axios.post(
@@ -73,9 +69,10 @@ if (res.data.token) {
           { withCredentials: true }
         );
       }
-  
+
       if (res.status === 200) {
-        console.log('Login/Register successful, redirecting to /admin');
+        // Cookies.set('token', res.data.token);
+        console.log('Login successful, redirecting to /admin');
         navigate("/admin", { replace: true });
       } else {
         setError("Error: Unable to process request");
@@ -89,7 +86,6 @@ if (res.data.token) {
       setLoading(false);
     }
   };
-  
 
   return (
     <div className="flex w-full items-center justify-center min-h-screen bg-gray-100">
