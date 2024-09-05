@@ -13,6 +13,9 @@ const AdminLogin = () => {
   useEffect(() => {
     const checkAdminAndToken = async () => {
       try {
+        // If no token, check if admin exists
+        const adminRes = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check");
+        setIsAdminExists(adminRes.data.exist);
         // Call CheckToken endpoint first to verify token existence
         const tokenRes = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/Admin/CheckToken", {
           withCredentials: true,
@@ -30,9 +33,6 @@ if (res.data.token) {
 }
 
   
-        // If no token, check if admin exists
-        const adminRes = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check");
-        setIsAdminExists(adminRes.data.exist);
   
       } catch (err) {
         console.error(err);
