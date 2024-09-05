@@ -24,11 +24,11 @@ const AdminLogin = async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,             // Set secure to true in production to use HTTPS
-      sameSite: 'strict',        // SameSite set to strict for CSRF protection
+      sameSite: 'None',        // SameSite set to strict for CSRF protection
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
 
-    res.status(200).json({ message: 'Login successful' } , token);
+    res.status(200).json({ message: 'Login successful' , token}  );
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
   }
@@ -61,11 +61,11 @@ const AdminRegister = async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,             // Set secure to true in production for HTTPS
-      sameSite: 'strict',        // Set SameSite to strict for CSRF protection
+      sameSite: 'None',        // Set SameSite to strict for CSRF protection
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
 
-    res.status(200).json({ message: "Admin registered successfully" } , token);
+    res.status(200).json({ message: "Admin registered successfully" , token});
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
   }
