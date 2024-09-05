@@ -2,11 +2,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Admin } from "../models/AdminLogin.model.js";
 
-// Admin Login
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { Admin } from "../models/AdminLogin.model.js";
-
 // Admin Login (Production Version)
 const AdminLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -22,10 +17,10 @@ const AdminLogin = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Generate the token
+
     const token = jwt.sign({ id: admin._id }, process.env.ACCESS_TOKEN, { expiresIn: '24h' });
 
-    // Set the cookie for production (secure & sameSite set for production)
+
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,             // Set secure to true in production to use HTTPS
