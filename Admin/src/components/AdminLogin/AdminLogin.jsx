@@ -13,29 +13,36 @@ const AdminLogin = () => {
   useEffect(() => {
     const checkAdminAndToken = async () => {
       try {
-        const adminRes = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check");
-        setIsAdminExists(adminRes.data.exist);
-
-        // Call the CheckToken endpoint to verify token existence
+        // Call CheckToken endpoint first to verify token existence
         const tokenRes = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/Admin/CheckToken", {
           withCredentials: true,
         });
-
+  
         if (tokenRes.status === 200 && tokenRes.data.token) {
           console.log('Token found, redirecting to /admin');
           navigate("/admin", { replace: true });
           return; // Stop further execution if token is present
         }
 
-      
+        // Example to set the token cookie client-side (if server doesn't handle it):
+if (res.data.token) {
+  Cookies.set('token', res.data.token, { secure: true, sameSite: 'strict' });
+}
+
+  
+        // If no token, check if admin exists
+        const adminRes = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/Admin/Check");
+        setIsAdminExists(adminRes.data.exist);
+  
       } catch (err) {
         console.error(err);
-        setError("Error checking or token");
+        setError("Error checking admin or token");
       }
     };
-
+  
     checkAdminAndToken();
   }, [navigate]);
+  
 
 
 
@@ -47,7 +54,7 @@ const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
     setError(""); // Clear previous errors
-
+  
     try {
       let res;
       if (isAdminExists) {
@@ -57,10 +64,7 @@ const AdminLogin = () => {
           formData,
           { withCredentials: true }
         );
-        console.log(res);
-        
-        
-
+        console.log("Login Response:", res);
       } else {
         // If admin doesn't exist, register
         res = await axios.post(
@@ -69,10 +73,9 @@ const AdminLogin = () => {
           { withCredentials: true }
         );
       }
-
+  
       if (res.status === 200) {
-        // Cookies.set('token', res.data.token);
-        console.log('Login successful, redirecting to /admin');
+        console.log('Login/Register successful, redirecting to /admin');
         navigate("/admin", { replace: true });
       } else {
         setError("Error: Unable to process request");
@@ -86,6 +89,7 @@ const AdminLogin = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="flex w-full items-center justify-center min-h-screen bg-gray-100">
