@@ -59,7 +59,7 @@ const AdminRegister = async (req, res) => {
     // Set the cookie
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV ,
+      secure: process.env.NODE_ENV === "production" ,
       sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
       maxAge: 24 * 60 * 60 * 1000,
     });
