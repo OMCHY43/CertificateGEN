@@ -11,7 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'; // Assu
 
 const App = () => {
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen">
       <Router>
         <Routes>
           <Route path="/" element={<AdminLogin />} />

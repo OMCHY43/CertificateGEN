@@ -8,6 +8,7 @@ import { fileURLToPath } from "url";
 import { PDFDocument, rgb } from "pdf-lib";
 import * as fontkit from 'fontkit';
 import { WorkShop } from "../models/AddWorkShop.model.js";
+import qrcode from "qrcode"
 
 
 const Register = asyncHandler(async (req, res) => {
@@ -40,6 +41,9 @@ const Register = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Form is closed now")
     }
 
+    let cat = await WorkShop.findById(WorkShopid)
+    const newCategory = cat.Category;
+
 
 
     const CreatedData = await FormData.create({
@@ -48,7 +52,8 @@ const Register = asyncHandler(async (req, res) => {
       phone,
       Workshop,
       state,
-      WorkShopid
+      WorkShopid,
+      Category: newCategory
     });
 
     if (!CreatedData) {
@@ -112,12 +117,18 @@ const ClaimCertificates = asyncHandler(async (req, res) => {
     }
 
     if (!MatchWorkshop) {
-      throw new ApiResponse(400, null, "Please selecet Your correct workshop Name")
+      throw new ApiResponse(400, null, "Please select your correct workshop name");
     }
 
     if (user.CertificatesStatus !== 'approved') {
       throw new ApiError(403, 'Certificate not approved');
     }
+
+    // Generate the verification URL
+    const verificationUrl = `http://localhost:5173/VerifyedUser/${user._id}`;
+
+    // Generate the QR code
+    const qrCodeImageUrl = await qrcode.toDataURL(verificationUrl);
 
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
@@ -132,6 +143,7 @@ const ClaimCertificates = asyncHandler(async (req, res) => {
     const pages = pdfDoc.getPages();
     const firstPage = pages[0];
 
+    // Add user details to the PDF
     const x = 320;
     const y = 270;
     const fontSize = 30;
@@ -152,6 +164,15 @@ const ClaimCertificates = asyncHandler(async (req, res) => {
       font: font,
     });
 
+    // Embed the QR code image into the PDF
+    const qrImage = await pdfDoc.embedPng(qrCodeImageUrl);
+    firstPage.drawImage(qrImage, {
+      x: 450, // Adjust the x and y coordinates as needed
+      y: 100,
+      width: 100,
+      height: 100,
+    });
+
     const pdfBytes = await pdfDoc.save();
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename="certificate.pdf"');
@@ -163,8 +184,6 @@ const ClaimCertificates = asyncHandler(async (req, res) => {
     return res.status(error.statusCode || 500).json({ error: error.message });
   }
 });
-
-export default ClaimCertificates;
 
 
 
@@ -229,6 +248,27 @@ const deleteAllReq = asyncHandler(async (req, res) => {
   res.json(new ApiResponse(200, allReq, "all request is deleted"))
 });
 
+const VerifyIndividualUser = asyncHandler(async (req, res) => {
+  try {
+    const {id} = req.params
+
+    const certificate = await FormData.find({ _id: id })
+    console.log(certificate);
+
+
+    if (certificate) {
+      res.json(new ApiResponse(200, { certificate }, "Congratulations Yor Are Verifyed"))
+    } else {
+      res.status(404).send('Certificate not found');
+    }
+
+  } catch (error) {
+
+    res.status(404).send('Certificate not found');
+  }
+
+})
+
 export {
   Register,
   GetAllReq,
@@ -239,4 +279,5 @@ export {
   acceptAllreq,
   deniedAllreq,
   deleteAllReq,
+  VerifyIndividualUser
 };

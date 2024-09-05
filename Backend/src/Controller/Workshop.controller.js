@@ -8,17 +8,16 @@ const getCurrentDateString = () => {
 };
 
 const AddWorkShop = asyncHandler(async (req, res) => {
-  const { WorkShopName, FromClosing } = req.body;
-
-  if (!WorkShopName || !FromClosing) {
+  const { WorkShopName, FromClosing , Category } = req.body;
+  if (!WorkShopName || !FromClosing || !Category) {
     return res.status(400).json(
-      new ApiResponse(400, null, "WorkShopName and FromClosing are required")
+      new ApiResponse(400, null, "WorkShopName , Category and FromClosing are required")
     );
   }
 
   try {
     // Create the workshop
-    const addworkshop = await WorkShop.create({ WorkShopName, FromClosing , status: 'active'});
+    const addworkshop = await WorkShop.create({ WorkShopName, FromClosing , status: 'active' , Category});
 
     const currentDate = getCurrentDateString();
 
@@ -38,10 +37,10 @@ const AddWorkShop = asyncHandler(async (req, res) => {
 
 const UpdateWorkShop = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { WorkShopName, FromClosing } = req.body;
+  const { WorkShopName, FromClosing , Category} = req.body;
 
-  if (!WorkShopName || !FromClosing) {
-    return res.status(400).json({ message: 'WorkShopName and FromClosing are required' });
+  if (!WorkShopName || !FromClosing || !Category) {
+    return res.status(400).json({ message: 'WorkShopName, Category and FromClosing are required' });
   }
 
   const currentDate = getCurrentDateString();

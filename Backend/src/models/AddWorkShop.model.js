@@ -8,8 +8,12 @@ const WorkShopSchema = new Schema({
     FromClosing: {
         type: Date,
         required: true
-    }
-    , status: {
+    },
+    Category: {
+        type : String,
+        required : true
+    },
+    status: {
         type: String,
         enum: ['active', 'closed'],
         default: 'active'

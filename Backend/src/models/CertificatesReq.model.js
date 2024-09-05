@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { WorkShop } from "../models/AddWorkShop.model.js"; // Ensure correct path
+import { typedArrayFor } from 'pdf-lib';
 
 const FormSchema = new mongoose.Schema({
   FullName: {
@@ -26,20 +27,23 @@ const FormSchema = new mongoose.Schema({
     trim: true,
   },
   WorkShopid: {
-    type: String ,
+    type: String,
   },
   Workshop: {
     type: String,
     required: true,
     trim: true,
   },
+  Category: {
+    type: String,
+  },
   CertificatesStatus: {
     type: String,
     enum: ['approved', 'denied', 'pending'],
     default: 'pending',
   },
-}, 
-{ timestamps: true });
+},
+  { timestamps: true });
 
 const FormData = mongoose.model('FormData', FormSchema);
 

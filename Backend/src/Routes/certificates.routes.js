@@ -9,6 +9,7 @@ import {
   acceptAllreq,
   deniedAllreq,
   deleteAllReq,
+  VerifyIndividualUser
 } from "../Controller/Certificates.controller.js";
 import { AdminAuth } from "../Middlerwere/Admin.Auth.middlewere.js";
 
@@ -28,5 +29,7 @@ router.route("/DeleteRequest/:id").delete(AdminAuth, DeleteRequest);
 router.route("/DeleteAllReq").delete( AdminAuth , deleteAllReq)
 router.route("/DeniedAllReq").patch( AdminAuth , deniedAllreq)
 router.route("/AcceptAllReq").patch( AdminAuth , acceptAllreq)
+
+router.route("/Verify/:id").get(VerifyIndividualUser)
 
 export default router;
