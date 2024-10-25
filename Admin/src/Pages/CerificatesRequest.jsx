@@ -121,7 +121,7 @@ const CertificatesRequests = () => {
     const requestDateString = requestDate.toISOString().split('T')[0];
 
     const matchesQuery = request.Category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          request.email.toLowerCase().includes(searchQuery.toLowerCase());
+                          request.email.toLowerCase().includes(searchQuery.toLowerCase()) || request.Name.toLowerCase().includes(searchQuery.toLowerCase());
 
     const isAfterStartDate = startDate ? requestDateString >= startDate : true;
     const isBeforeEndDate = endDate ? requestDateString <= endDate : true;

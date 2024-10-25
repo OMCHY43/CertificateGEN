@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { ThreeDots } from "react-loader-spinner"; // Optional: loader spinner if needed
+import { ThreeDots } from "react-loader-spinner";
 
 const Popup = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [workshops, setWorkshops] = useState([]);
-  const [selectedWorkshop, setSelectedWorkshop] = useState(""); // To store the selected workshop
-  const [loading, setLoading] = useState(false); // Loading state for form submission
-  const [error, setError] = useState(""); // Error state to handle any issues
+  const [selectedWorkshop, setSelectedWorkshop] = useState("");
+  const [workShopId, setWorkShopId] = useState("");
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState(""); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading on form submission
-    setError(""); // Reset any previous errors
+    setLoading(true); 
+    setError(""); 
 
     try {
       const response = await axios.post(
         "https://full-stack-bytesminders.onrender.com/api/v1/users/ClaimCertificates",
-        { email, Workshop: selectedWorkshop }, // Submit both email and selected workshop
+        { email, Workshop: selectedWorkshop, WorkShopid: workShopId },
         { responseType: "arraybuffer" }
       );
 
@@ -28,20 +29,22 @@ const Popup = ({ onClose }) => {
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = "certificate.pdf";
-      
+
       // Append link to the document and trigger click to start download
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
     } catch (error) {
-      if(error.response.status === 403){
-        alert("You are not approved")
+      if (error.response && error.response.status === 403) {
+        alert("You are not approved to claim the certificate");
+      } else {
+        console.error("Error claiming certificate:", error);
+        setError(
+          "Failed to claim certificate. Please check your details and try again."
+        );
       }
-      console.error("Error claiming certificate", error);
-      setError("Failed to claim certificate. Please check your details and try again.");
     } finally {
-      setLoading(false); // End loading after form submission
+      setLoading(false); 
     }
   };
 
@@ -50,7 +53,9 @@ const Popup = ({ onClose }) => {
   };
 
   const handleWorkshopChange = (e) => {
-    setSelectedWorkshop(e.target.value); // Update selected workshop
+    setSelectedWorkshop(e.target.options[e.target.selectedIndex].text);
+    
+    setWorkShopId(e.target.value); 
   };
 
   useEffect(() => {
@@ -87,20 +92,19 @@ const Popup = ({ onClose }) => {
           />
           <select
             className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
-            value={selectedWorkshop}
+            value={workShopId}
             onChange={handleWorkshopChange}
             required
           >
             <option value="">Select Workshop</option>
             {workshops.map((item) => (
-              <option key={item._id} value={item.WorkShopName}>
+              <option key={item._id} value={item._id}>
                 {item.WorkShopName}
               </option>
             ))}
           </select>
 
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>} {/* Display error */}
-          
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           <p className="text-red-500 text-xs mt-2">
             If facing any issues: Contact Admin of your WhatsApp Group.
           </p>
@@ -115,8 +119,8 @@ const Popup = ({ onClose }) => {
             </button>
             <button
               type="submit"
-              className="bg-green-500 text-white py-2 px-4 rounded-lg"
-              disabled={loading} // Disable button while loading
+              className="bg-green-500 text-white py-2 px-4 rounded-lg flex items-center"
+              disabled={loading}
             >
               {loading ? (
                 <ThreeDots

@@ -8,16 +8,16 @@ const getCurrentDateString = () => {
 };
 
 const AddWorkShop = asyncHandler(async (req, res) => {
-  const { WorkShopName, FromClosing , Category } = req.body;
-  if (!WorkShopName || !FromClosing || !Category) {
+  const { WorkShopName, FromClosing , Category , Type , EventDate , EventEndDate} = req.body;
+  if (!WorkShopName || !FromClosing || !Category ||!Type ||!EventEndDate || !EventDate) {
     return res.status(400).json(
-      new ApiResponse(400, null, "WorkShopName , Category and FromClosing are required")
+      new ApiResponse(400, null, "WorkShopName , Category , type , EventDate , EventEndDate and FromClosing are required")
     );
   }
 
   try {
     // Create the workshop
-    const addworkshop = await WorkShop.create({ WorkShopName, FromClosing , status: 'active' , Category});
+    const addworkshop = await WorkShop.create({ WorkShopName, FromClosing , status: 'active' , Category , Type , EventDate , EventEndDate});
 
     const currentDate = getCurrentDateString();
 
@@ -29,17 +29,43 @@ const AddWorkShop = asyncHandler(async (req, res) => {
       );
     }
 
+    
     return res.status(201).json(new ApiResponse(200, addworkshop, "Workshop Created Successfully"));
   } catch (error) {
     return res.status(500).json(new ApiResponse(500, null, "Internal Server Error"));
   }
 });
 
+const OnOffForm = asyncHandler(async(req,res) =>{
+
+  try {
+    const { id } = req.params;
+    const { OnOffStatus } = req.body; 
+    
+    const workshop = await WorkShop.findById(id);
+
+    if (!workshop) {
+        return res.status(404).json({ message: "Workshop not found" });
+    }
+
+    workshop.OnOffStatus = OnOffStatus; 
+    await workshop.save();
+
+    res.status(200).json({
+        message: `Workshop ${OnOffStatus} successfully!`,
+        data: workshop
+    });
+} catch (error) {
+    res.status(500).json({ message: "Error updating workshop status", error });
+}
+
+})
+
 const UpdateWorkShop = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { WorkShopName, FromClosing , Category} = req.body;
+  const { WorkShopName, FromClosing , Category , Type} = req.body;
 
-  if (!WorkShopName || !FromClosing || !Category) {
+  if (!WorkShopName || !FromClosing || !Category ||!Type) {
     return res.status(400).json({ message: 'WorkShopName, Category and FromClosing are required' });
   }
 
@@ -54,8 +80,9 @@ const UpdateWorkShop = asyncHandler(async (req, res) => {
   // Update workshop
   updateWorkshop.WorkShopName = WorkShopName;
   updateWorkshop.FromClosing = FromClosing;
+  updateWorkshop.Type = Type;
 
-  // Check if the current date matches the closing date
+  
   if (currentDate === FromClosing.split('T')[0]) {
     updateWorkshop.status = 'closed';
   }
@@ -93,4 +120,4 @@ const GetAlLWorkShop = asyncHandler(async (req, res) => {
   return res.json(new ApiResponse(200, allworkshop, "Data Fetched successfully"));
 });
 
-export { AddWorkShop, DeleteWorkShop, UpdateWorkShop, GetAlLWorkShop };
+export { AddWorkShop, DeleteWorkShop, UpdateWorkShop, GetAlLWorkShop , OnOffForm};

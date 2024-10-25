@@ -16,25 +16,41 @@ const Certificates = () => {
     Workshop: "",
     WorkShopid: "",
   });
-  const [states, setstates] = useState([]);
+  const [states, setStates] = useState([]);
   const [workshops, setWorkshops] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const openPopup = () => {
-    setIsPopupOpen(true);
-  };
+  useEffect(() => {
+    setStates(StateData);
+  }, []);
 
-  const closePopup = () => {
-    setIsPopupOpen(false);
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop");
+        if (response.data.data) {
+          setWorkshops(response.data.data.filter(ws => ws.OnOffStatus === "On"));
+        }
+      } catch (error) {
+        console.error("Error fetching workshops:", error);
+        setError("Failed to fetch workshops.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const openPopup = () => setIsPopupOpen(true);
+  const closePopup = () => setIsPopupOpen(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle workshop selection separately
   const handleWorkshopChange = (e) => {
     const selectedOption = e.target.options[e.target.selectedIndex];
     const workshopName = selectedOption.text;
@@ -47,57 +63,25 @@ const Certificates = () => {
     });
   };
 
-  useEffect(() => {
-    setstates(StateData);
-  }, []);
-
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          "https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop"
-        );
-        console.log(response);
-        if (response.data.data) {
-          setWorkshops(response.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching workshops:", error);
-        setError("Failed to fetch workshops.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
-  const SubmitData = async (e) => {
+  const submitData = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
-      const response = await axios.post(
-        "https://full-stack-bytesminders.onrender.com/api/v1/users/Register",
-        formData
-      );
-      console.log("Response:", response);
-
+      const response = await axios.post("https://full-stack-bytesminders.onrender.com/api/v1/users/Register", formData);
       if (response.data.statusCode === 200) {
         toast.success(response.data.message);
       } else if (response.data.statusCode === 409) {
-        toast.success("Request is already sent with this phone and email.");
+        toast.info("Request is already sent with this phone and email.");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-
-      if (error.response.status === 409) {
+      if (error.response?.status === 409) {
         setError(error.response.data.data.error);
         toast.error(error.response.data.data.error);
-      }else if(error.response.status === 400){
-        toast.error("from is now closed")
-      } 
-      else {
+      } else if (error.response?.status === 400) {
+        toast.error("Form is now closed.");
+      } else {
         setError("Error submitting the form. Please try again.");
         toast.error("Error submitting the form. Please try again.");
       }
@@ -116,26 +100,15 @@ const Certificates = () => {
           <button className="text-white py-2 px-4 rounded-full">COURSE</button>
           <button className="text-white py-2 px-4 rounded-full">INTERNSHIP</button>
         </div>
-        <h1 className="text-center text-xl text-primary mb-4">
-          Register - Workshop Certificate
-        </h1>
-        <p className="text-center text-white mb-6 font-bold text-xl">
-          Bytes Minders
-        </p>
+        <h1 className="text-center text-xl text-primary mb-4">Register - Workshop Certificate</h1>
+        <p className="text-center text-white mb-6 font-bold text-xl">Bytes Minders</p>
 
         {loading ? (
           <div className="flex justify-center">
-            <ThreeDots
-              height="80"
-              width="80"
-              radius="9"
-              color="#00BFFF"
-              ariaLabel="three-dots-loading"
-              visible={true}
-            />
+            <ThreeDots height="80" width="80" radius="9" color="#00BFFF" ariaLabel="three-dots-loading" visible={true} />
           </div>
         ) : (
-          <form className="space-y-4" onSubmit={SubmitData}>
+          <form className="space-y-4" onSubmit={submitData}>
             <input
               onChange={handleChange}
               value={formData.FullName}
@@ -143,6 +116,7 @@ const Certificates = () => {
               type="text"
               placeholder="Full Name"
               className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
+              required
             />
             <div className="flex space-x-4">
               <input
@@ -152,15 +126,16 @@ const Certificates = () => {
                 type="number"
                 placeholder="Phone Number"
                 className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
+                required
               />
-
               <select
                 onChange={handleChange}
                 value={formData.state}
                 name="state"
                 className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
+                required
               >
-                <option>Select State</option>
+                <option value="">Select State</option>
                 {states.map((state, index) => (
                   <option key={index} value={state}>
                     {state}
@@ -175,12 +150,14 @@ const Certificates = () => {
               type="email"
               placeholder="Email"
               className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
+              required
             />
             <select
-              onChange={handleWorkshopChange} // Use the separate handler
-              value={formData.WorkShopid} // Bind to WorkShopid only for value
+              onChange={handleWorkshopChange}
+              value={formData.WorkShopid}
               name="Workshop"
               className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
+              required
             >
               <option value="">Select Workshop</option>
               {workshops.map((item) => (
@@ -189,8 +166,7 @@ const Certificates = () => {
                 </option>
               ))}
             </select>
-
-            <button className="w-full py-2 mt-4 bg-primary rounded-lg text-white">
+            <button type="submit" className="w-full py-2 mt-4 bg-primary rounded-lg text-white">
               REGISTER
             </button>
           </form>
@@ -199,7 +175,7 @@ const Certificates = () => {
         {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
 
         <div className="mt-6 text-center text-white">
-          <p>or Claim for Your Workshop Certificate:</p>
+          <p>Or Claim Your Workshop Certificate:</p>
           <button
             className="w-full py-2 mt-4 bg-secondary rounded-lg text-white"
             onClick={openPopup}

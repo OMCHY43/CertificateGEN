@@ -10,9 +10,7 @@ import * as fontkit from 'fontkit';
 import { WorkShop } from "../models/AddWorkShop.model.js";
 import qrcode from "qrcode"
 
-
 const Register = asyncHandler(async (req, res) => {
-
 
   try {
     const { FullName, phone, email, Workshop, state, WorkShopid } = req.body;
@@ -20,9 +18,6 @@ const Register = asyncHandler(async (req, res) => {
     if ([FullName, phone, email, Workshop, state, WorkShopid].some(field => !field.trim())) {
       throw new ApiError(400, 'All fields are required');
     }
-
-
-
     console.log('Searching for email:', email);
 
     const normalizedEmail = email.trim().toLowerCase();
@@ -106,10 +101,11 @@ const ApproveCertificateRequest = asyncHandler(async (req, res) => {
 });
 
 // Claim certificate
+// Claim certificate
 const ClaimCertificates = asyncHandler(async (req, res) => {
   try {
-    const { email, Workshop } = req.body;
-    const user = await FormData.findOne({ email, Workshop });
+    const { email, Workshop, WorkShopid } = req.body;
+    const user = await FormData.findOne({ email, Workshop, WorkShopid });
     const MatchWorkshop = await FormData.findOne({ Workshop });
 
     if (!user) {
@@ -121,13 +117,10 @@ const ClaimCertificates = asyncHandler(async (req, res) => {
     }
 
     if (user.CertificatesStatus !== 'approved') {
-      throw new ApiError(403, 'Certificate not approved');
+      throw new ApiError(403, 'Certificate not approved')
     }
 
-    // Generate the verification URL
     const verificationUrl = `http://localhost:5173/VerifyedUser/${user._id}`;
-
-    // Generate the QR code
     const qrCodeImageUrl = await qrcode.toDataURL(verificationUrl);
 
     const __filename = fileURLToPath(import.meta.url);
@@ -138,39 +131,111 @@ const ClaimCertificates = asyncHandler(async (req, res) => {
       throw new ApiError(500, 'PDF template not found');
     }
 
-    const existingPDFBytes = fs.readFileSync(existingPDFPath);
-    const pdfDoc = await PDFDocument.load(existingPDFBytes);
+    const Details = await FormData.aggregate([
+  {
+    "$addFields": {
+      "WorkShopid": { "$toObjectId": "$WorkShopid" }
+    }
+  },
+  {
+    "$lookup": {
+      "from": "workshops",
+      "localField": "WorkShopid",
+      "foreignField": "_id",
+      "as": "details"
+    }
+  }
+]);
+
+// Extract the relevant workshop details, including the dates
+const workshopDetails = Details[0]?.details[0]; // Assuming you only need the first match
+
+if (!workshopDetails) {
+  throw new ApiError(400, 'Workshop details not found');
+}
+
+const EventDate = workshopDetails.EventDate ? new Date(workshopDetails.EventDate).toLocaleDateString() : 'N/A';
+const EventEndDate = workshopDetails.EventEndDate ? new Date(workshopDetails.EventEndDate).toLocaleDateString() : 'N/A';
+const Type = workshopDetails.Type 
+const WorkShopName = workshopDetails.WorkShopName ;
+
+
+// Now you can log or use the dates as needed
+console.log('Event Date:', EventDate);
+console.log('Event End Date:', EventEndDate);
+console.log('Event Type:', Type);
+
+
+const existingPDFBytes = fs.readFileSync(existingPDFPath);
+const pdfDoc = await PDFDocument.load(existingPDFBytes);
     const pages = pdfDoc.getPages();
     const firstPage = pages[0];
-
-    // Add user details to the PDF
-    const x = 320;
-    const y = 270;
+    
+    const x = 300;
+    const y  = 300;
     const fontSize = 30;
-    const Name = user.FullName || 'test';
+    const Name = user.FullName || 'Error';
+
+    
 
     // Fonts 
     pdfDoc.registerFontkit(fontkit);
-    const fontPath = path.join(__dirname, '../public/Allura-Regular.ttf'); // Adjust path as needed
+    const fontPath = path.join(__dirname, '../public/Garet-Book.ttf'); 
     const fontBytes = fs.readFileSync(fontPath);
     const font = await pdfDoc.embedFont(fontBytes);
-
+    
     // Draw text on the PDF
     firstPage.drawText(Name, {
       x: x,
       y: y,
       size: fontSize,
-      color: rgb(0.85, 0.65, 0.13),
+      color: rgb(0, 0, 0),
       font: font,
     });
+
+    // Draw Event on the PDF
+    firstPage.drawText(Type, {
+      x: 488,
+      y: 262,
+      size: 15,
+      color: rgb(0, 0, 0),
+      font: font,
+    });
+    
+    // Draw the event date on the PDF (you can adjust x, y coordinates as needed)
+    firstPage.drawText(`${EventDate}`, {
+      x: 230,
+      y: 239,
+      size: 15,
+      color: rgb(0, 0, 0),
+      font: font,
+    });
+    
+    firstPage.drawText(`${EventEndDate}`, {
+      x: 350,
+      y: 239,
+      size: 15,
+      color: rgb(0, 0, 0),
+      font: font,
+    });
+
+    // WorkShop Name 
+    firstPage.drawText(`${WorkShopName}`, {
+      x: 575,
+      y: 262,
+      size: 15,
+      color: rgb(0, 0, 0),
+      font: font,
+    });
+
 
     // Embed the QR code image into the PDF
     const qrImage = await pdfDoc.embedPng(qrCodeImageUrl);
     firstPage.drawImage(qrImage, {
-      x: 450, // Adjust the x and y coordinates as needed
-      y: 100,
-      width: 100,
-      height: 100,
+      x: 650, // Adjust the x and y coordinates as needed
+      y: 30,
+      width: 135,
+      height: 135,
     });
 
     const pdfBytes = await pdfDoc.save();
@@ -184,6 +249,7 @@ const ClaimCertificates = asyncHandler(async (req, res) => {
     return res.status(error.statusCode || 500).json({ error: error.message });
   }
 });
+
 
 
 
@@ -247,6 +313,8 @@ const deleteAllReq = asyncHandler(async (req, res) => {
 
   res.json(new ApiResponse(200, allReq, "all request is deleted"))
 });
+
+
 
 const VerifyIndividualUser = asyncHandler(async (req, res) => {
   try {

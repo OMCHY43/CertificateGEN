@@ -5,8 +5,11 @@ import { useNavigate } from 'react-router-dom';
 
 const AddWorkShop = () => {
   const [workshopName, setWorkshopName] = useState("");
+  const [EventEndDate , setEventEndDate] = useState("") ;
+  const [EventDate , setEventDate] = useState("") ;
   const [fromClosing, setFromClosing] = useState("");
   const [Category, setCategory] = useState("");
+  const [Type, setType] = useState("")
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [editingWorkshop, setEditingWorkshop] = useState(null);
@@ -21,11 +24,7 @@ const AddWorkShop = () => {
         const response = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop", {
           withCredentials: true,
         });
-        const DATA = response.data.data;
-        console.log(DATA);
-
-        const activeWorkshops = DATA.filter(workshop => workshop.status === 'active');
-        setWorkshops(activeWorkshops);
+        setWorkshops(response.data.data);
         toast.success("Data fetched successfully");
       } catch (error) {
         setError("Failed to fetch workshops. Please try again.");
@@ -37,19 +36,39 @@ const AddWorkShop = () => {
     fetchWorkshops();
   }, []);
 
+
+  const OnOffForm = async (id, OnOffStatus) => {
+    try {
+      const res = await axios.put(`https://full-stack-bytesminders.onrender.com/api/v1/admin/OnOffForm/${id}`, { OnOffStatus }, {
+        withCredentials: true
+      });
+      console.log(res);
+
+      const updatedWorkshops = workshops.map(ws =>
+        ws._id === id ? { ...ws, OnOffStatus } : ws
+      );
+      setWorkshops(updatedWorkshops);
+      toast.success(res.data.message);
+    } catch (error) {
+      toast.error("Failed to update workshop status");
+    }
+  };
+
+  // Add or update workshop
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    const workshopData = { WorkShopName: workshopName, FromClosing: fromClosing, Category };
+    const workshopData = { WorkShopName: workshopName, FromClosing: fromClosing, Category, Type , EventDate , EventEndDate };
 
     try {
       if (editingWorkshop) {
-        // Update existing workshop
+        // Edit workshop
         const response = await axios.put(`https://full-stack-bytesminders.onrender.com/api/v1/admin/UpdateWorkShop/${editingWorkshop._id}`, workshopData, {
           withCredentials: true,
         });
+        // Update the workshop in the list
         setWorkshops(workshops.map((ws) =>
           ws._id === editingWorkshop._id ? { ...ws, ...workshopData } : ws
         ));
@@ -60,16 +79,16 @@ const AddWorkShop = () => {
         const response = await axios.post("https://full-stack-bytesminders.onrender.com/api/v1/admin/AddWorkShop", workshopData, {
           withCredentials: true,
         });
-        const newWorkshop = response.data.data;
-        setWorkshops([...workshops, newWorkshop]);
+        setWorkshops([...workshops, response.data.data]);
         setSuccess("Workshop added successfully!");
       }
     } catch (error) {
       setError(error.response?.data?.message || "Failed to process request. Please try again.");
     } finally {
+      // Reset form fields
       setWorkshopName("");
       setFromClosing("");
-      setCategory(""); // Clear Category on submit
+      setCategory("");
     }
   };
 
@@ -77,9 +96,10 @@ const AddWorkShop = () => {
     setEditingWorkshop(workshop);
     setWorkshopName(workshop.WorkShopName);
     setFromClosing(workshop.FromClosing);
-    setCategory(workshop.Category); // Set Category for editing
+    setCategory(workshop.Category);
   };
 
+  // Delete workshop
   const handleDelete = async (id) => {
     try {
       await axios.delete(`https://full-stack-bytesminders.onrender.com/api/v1/admin/DeleteWorkShop/${id}`, {
@@ -92,124 +112,147 @@ const AddWorkShop = () => {
     }
   };
 
-  const handleValueChange = (e) => {
-    setCategory(e.target.value);
-  }
-
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="max-h-screen w-full flex flex-col items-center justify-center bg-gray-100 p-4">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-100 p-4">
       <div className="w-full bg-white p-6 rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold mb-4">
           {editingWorkshop ? "Edit Workshop" : "Add New Workshop"}
         </h1>
         {error && <div className="text-red-500 mb-4">{error}</div>}
         {success && <div className="text-green-500 mb-4">{success}</div>}
+
+        {/* Workshop Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="workshopName" className="block text-sm font-medium text-gray-700">
-              Workshop Name
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Workshop Name</label>
             <input
               type="text"
-              id="workshopName"
               value={workshopName}
               onChange={(e) => setWorkshopName(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
               required
-              disabled={loading}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
+
           <div>
-            <label htmlFor="fromClosing" className="block text-sm font-medium text-gray-700">
-              From Closing Date
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Event Date</label>
             <input
               type="date"
-              id="fromClosing"
-              value={fromClosing}
-              onChange={(e) => setFromClosing(e.target.value)}
+              value={EventDate}
+              onChange={(e) => setEventDate(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
               required
-              disabled={loading}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
+
           <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-              Category
-            </label>
-            <select
-              id="category"
+            <label className="block text-sm font-medium text-gray-700">Event end date</label>
+            <input
+              type="date"
+              value={EventEndDate}
+              onChange={(e) => setEventEndDate(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">From Closing Date</label>
+            <input
+              type="date"
+              value={fromClosing}
+              onChange={(e) => setFromClosing(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Category</label>
+            <input
+              type="text"
               value={Category}
-              onChange={handleValueChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              disabled={loading}
+              onChange={(e) => setCategory(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Type</label>
+            <select
+              value={Type}
+              onChange={(e) => setType(e.target.value)}
+              className="border border-gray-300 rounded-md px-2 py-2 mt-1 w-44"
             >
-              <option value="">Select a category</option>
-              <option value="AI ML">AI ML</option>
-              <option value="Web Development">Web Development</option>
-              <option value="Python Development">Python Development</option>
-              <option value="AI ML With Python Development">AI ML With Python Development</option>
-              <option value="WordPress Development">WordPress Development</option>
+              <option value="">Select types</option>
+              <option value="Workshop">Workshop</option>
+              <option value="Internship">Internship</option>
+              <option value="Course">Course</option>
             </select>
           </div>
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            disabled={loading}
-          >
-            {editingWorkshop ? "Update Workshop" : "Add Workshop"}
-          </button>
+
+          <div>
+            <button
+              type="submit"
+              className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+            >
+              {editingWorkshop ? "Update Workshop" : "Add Workshop"}
+            </button>
+          </div>
         </form>
 
+        {/* Workshops List */}
         <div className="mt-8">
           <h2 className="text-xl font-bold mb-4">Workshops List</h2>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table className="w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Workshop Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    From Closing Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+                  <th>Workshop Name</th>
+                  <th>From Closing Date</th>
+                  <th>Category</th>
+                  <th>Type</th>
+                  <th>Actions</th>
+                  <th>Event Date</th>
+                  <th>Event end date</th>
+                  <th>On / Off</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="w-full bg-white divide-y divide-gray-200">
                 {workshops.map((workshop) => (
                   <tr key={workshop._id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {workshop.WorkShopName}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(workshop.FromClosing).toISOString().split('T')[0]}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {workshop.Category}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <td>{workshop.WorkShopName}</td>
+                    <td>{new Date(workshop.FromClosing).toISOString().split('T')[0]}</td>
+                    <td>{workshop.Category}</td>
+                    <td>{workshop.Type}</td>
+                    <td>
                       <button
+                        className="bg-green-500 text-white px-3 py-1 rounded-md mr-2"
                         onClick={() => handleEdit(workshop)}
-                        className="text-indigo-600 hover:text-indigo-900 mr-4"
-                        disabled={loading}
                       >
                         Edit
                       </button>
                       <button
+                        className="bg-red-500 text-white px-3 py-1 rounded-md"
                         onClick={() => handleDelete(workshop._id)}
-                        className="text-red-600 hover:text-red-900"
-                        disabled={loading}
                       >
                         Delete
                       </button>
+                    </td>
+                    <td>{new Date(workshop.EventDate).toISOString().split('T')[0]}</td>
+                    <td>{new Date(workshop.EventEndDate).toISOString().split('T')[0]}</td>
+                    <td>
+                      <select
+                        value={workshop.OnOffStatus}
+                        onChange={(e) => OnOffForm(workshop._id, e.target.value)}
+                        className="border border-gray-300 rounded-md px-2 py-1"
+                      >
+                        <option value="On">On</option>
+                        <option value="Off">Off</option>
+                      </select>
                     </td>
                   </tr>
                 ))}

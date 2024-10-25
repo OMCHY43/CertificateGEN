@@ -5,10 +5,27 @@ const WorkShopSchema = new Schema({
         type: String,
         required: true
     },
+    EventDate : {
+        type : Date , 
+        required : true ,
+    } ,
+    EventEndDate : {
+        type : Date , 
+        required : true ,
+    } ,
     FromClosing: {
         type: Date,
         required: true
     },
+    OnOffStatus: {
+        type : String ,
+        enm : ["On" , "Off"] ,
+        default : "On"
+    } ,
+    Type :{
+        type : String ,
+        required : true
+    } ,
     Category: {
         type : String,
         required : true

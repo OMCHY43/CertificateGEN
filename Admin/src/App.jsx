@@ -7,7 +7,9 @@ import AdminLogin from './components/AdminLogin/AdminLogin';
 import AdminLayout from './Layout/layout';
 import CertificatesRequests from './Pages/CerificatesRequest';
 import AddWorkShop from './Pages/AddWorkShop';
-import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'; // Assume this component is now updated
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'; 
+import Types from './Pages/Types';
+import Overview from './Pages/Overview';
 
 const App = () => {
   return (
@@ -26,8 +28,10 @@ const App = () => {
             }
           >
             {/* Nested Routes under AdminLayout */}
+            <Route path='Overview' element={<Overview/>} />
             <Route path="certificates-requests" element={<CertificatesRequests />} />
             <Route path="addworkshop" element={<AddWorkShop />} />
+            <Route path="Types" element={<Types />} />
           </Route>
 
           {/* Redirect all unmatched routes to login */}
