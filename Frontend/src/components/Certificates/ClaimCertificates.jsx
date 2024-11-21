@@ -7,130 +7,98 @@ const Popup = ({ onClose }) => {
   const [workshops, setWorkshops] = useState([]);
   const [selectedWorkshop, setSelectedWorkshop] = useState("");
   const [workShopId, setWorkShopId] = useState("");
-  const [loading, setLoading] = useState(false); 
-  const [error, setError] = useState(""); 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); 
-    setError(""); 
+    setLoading(true);
+    setError("");
 
     try {
       const response = await axios.post(
-        "https://full-stack-bytesminders.onrender.com/api/v1/users/ClaimCertificates",
+        "/api/v1/users/ClaimCertificates",
         { email, Workshop: selectedWorkshop, WorkShopid: workShopId },
         { responseType: "arraybuffer" }
       );
 
-      // Convert response data to blob
       const blob = new Blob([response.data], { type: "application/pdf" });
-
-      // Create a URL for the blob and initiate download
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = "certificate.pdf";
-
-      // Append link to the document and trigger click to start download
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      if (error.response && error.response.status === 403) {
+      if (error.response?.status === 403) {
         alert("You are not approved to claim the certificate");
       } else {
-        console.error("Error claiming certificate:", error);
-        setError(
-          "Failed to claim certificate. Please check your details and try again."
-        );
+        setError("Failed to claim certificate. Please check your details.");
       }
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
-  };
-
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const handleWorkshopChange = (e) => {
-    setSelectedWorkshop(e.target.options[e.target.selectedIndex].text);
-    
-    setWorkShopId(e.target.value); 
   };
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchWorkshops() {
       try {
-        const response = await axios.get(
-          "https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop"
-        );
-
-        if (response.data.data) {
-          setWorkshops(response.data.data);
-        }
+        const response = await axios.get("/api/v1/admin/GetAllWorkShop");
+        setWorkshops(response.data.data || []);
       } catch (error) {
-        console.error("Error fetching workshops:", error);
-        setError("Failed to fetch workshops.");
+        setError("Failed to load workshops.");
       }
     }
-    fetchData();
+    fetchWorkshops();
   }, []);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 text-black">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-        <h2 className="text-lg font-bold mb-4">Enter Valid Credential - Workshop</h2>
-        <form className="space-y-4" onSubmit={handleSubmit}>
+    <div className="fixed inset-0 flex justify-center items-center z-50 bg-gradient-to-br from-indigo-900 via-black to-gray-900 bg-opacity-90">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-100 hover:scale-105 transition-transform duration-500">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+          Claim Your Certificate
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
           <input
             type="email"
-            placeholder="Enter Registered Email"
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
-            onChange={handleEmailChange}
+            placeholder="Registered Email"
             value={email}
-            name="email"
+            onChange={(e) => setEmail(e.target.value)}
             required
+            className="w-full px-4 py-3 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 focus:ring-4 focus:ring-indigo-500"
           />
           <select
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
             value={workShopId}
-            onChange={handleWorkshopChange}
+            onChange={(e) => {
+              setSelectedWorkshop(e.target.options[e.target.selectedIndex].text);
+              setWorkShopId(e.target.value);
+            }}
             required
+            className="w-full px-4 py-3 bg-gray-100 text-gray-800 rounded-lg border border-gray-300 focus:ring-4 focus:ring-indigo-500"
           >
             <option value="">Select Workshop</option>
-            {workshops.map((item) => (
-              <option key={item._id} value={item._id}>
-                {item.WorkShopName}
+            {workshops.map((workshop) => (
+              <option key={workshop._id} value={workshop._id}>
+                {workshop.WorkShopName}
               </option>
             ))}
           </select>
-
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-          <p className="text-red-500 text-xs mt-2">
-            If facing any issues: Contact Admin of your WhatsApp Group.
-          </p>
-
-          <div className="mt-4 flex justify-end space-x-2">
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <div className="flex justify-between gap-4">
             <button
               type="button"
               onClick={onClose}
-              className="bg-purple-500 text-white py-2 px-4 rounded-lg"
+              className="w-full py-2 text-gray-800 bg-gray-200 rounded-lg hover:bg-gray-300"
             >
-              Close
+              Cancel
             </button>
             <button
               type="submit"
-              className="bg-green-500 text-white py-2 px-4 rounded-lg flex items-center"
               disabled={loading}
+              className="w-full py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-indigo-500 transition-colors duration-300"
             >
               {loading ? (
-                <ThreeDots
-                  height="30"
-                  width="30"
-                  radius="9"
-                  color="#FFF"
-                  ariaLabel="three-dots-loading"
-                  visible={true}
-                />
+                <ThreeDots height="20" width="20" color="#fff" />
               ) : (
                 "Claim Now"
               )}

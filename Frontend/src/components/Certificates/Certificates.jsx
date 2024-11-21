@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Popup from "./ClaimCertificates";
-import { Link } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { ThreeDots } from "react-loader-spinner";
-import StateData from "./States.json";
+import Popup from "./ClaimCertificates";
+import states from "./States.json"
 
 const Certificates = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -16,183 +14,131 @@ const Certificates = () => {
     Workshop: "",
     WorkShopid: "",
   });
-  const [states, setStates] = useState([]);
   const [workshops, setWorkshops] = useState([]);
-  const [error, setError] = useState("");
+
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    setStates(StateData);
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
+    async function fetchWorkshops() {
       setLoading(true);
       try {
-        const response = await axios.get("https://full-stack-bytesminders.onrender.com/api/v1/admin/GetAllWorkShop");
-        if (response.data.data) {
-          setWorkshops(response.data.data.filter(ws => ws.OnOffStatus === "On"));
-        }
+        const response = await axios.get("/api/v1/admin/GetAllWorkShop");
+        setWorkshops(response.data.data || []);
       } catch (error) {
-        console.error("Error fetching workshops:", error);
-        setError("Failed to fetch workshops.");
+        setError("Failed to load workshops.");
       } finally {
         setLoading(false);
       }
-    };
-    fetchData();
+    }
+    fetchWorkshops();
   }, []);
-
-  const openPopup = () => setIsPopupOpen(true);
-  const closePopup = () => setIsPopupOpen(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleWorkshopChange = (e) => {
-    const selectedOption = e.target.options[e.target.selectedIndex];
-    const workshopName = selectedOption.text;
-    const workshopId = selectedOption.value;
-
-    setFormData({
-      ...formData,
-      Workshop: workshopName,
-      WorkShopid: workshopId,
-    });
-  };
-
-  const submitData = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
+    setError("");
+
     try {
-      const response = await axios.post("https://full-stack-bytesminders.onrender.com/api/v1/users/Register", formData);
-      if (response.data.statusCode === 200) {
-        toast.success(response.data.message);
-      } else if (response.data.statusCode === 409) {
-        toast.info("Request is already sent with this phone and email.");
-      }
+      const response = await axios.post("/api/v1/users/Register", formData);
+      alert(response.data.message || "Registration successful!");
     } catch (error) {
-      console.error("Error submitting form:", error);
-      if (error.response?.status === 409) {
-        setError(error.response.data.data.error);
-        toast.error(error.response.data.data.error);
-      } else if (error.response?.status === 400) {
-        toast.error("Form is now closed.");
-      } else {
-        setError("Error submitting the form. Please try again.");
-        toast.error("Error submitting the form. Please try again.");
-      }
+      setError("Failed to register. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-darkBg">
-      <div className="bg-darkCard p-8 rounded-xl shadow-lg max-w-md w-full">
-        <div className="flex justify-around mb-6">
-          <button className="text-white bg-primary py-2 px-4 rounded-full">
-            WORKSHOP
-          </button>
-          <button className="text-white py-2 px-4 rounded-full">COURSE</button>
-          <button className="text-white py-2 px-4 rounded-full">INTERNSHIP</button>
-        </div>
-        <h1 className="text-center text-xl text-primary mb-4">Register - Workshop Certificate</h1>
-        <p className="text-center text-white mb-6 font-bold text-xl">Bytes Minders</p>
-
-        {loading ? (
-          <div className="flex justify-center">
-            <ThreeDots height="80" width="80" radius="9" color="#00BFFF" ariaLabel="three-dots-loading" visible={true} />
-          </div>
-        ) : (
-          <form className="space-y-4" onSubmit={submitData}>
-            <input
-              onChange={handleChange}
-              value={formData.FullName}
-              name="FullName"
-              type="text"
-              placeholder="Full Name"
-              className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
-              required
-            />
-            <div className="flex space-x-4">
-              <input
-                onChange={handleChange}
-                value={formData.phone}
-                name="phone"
-                type="number"
-                placeholder="Phone Number"
-                className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
-                required
-              />
-              <select
-                onChange={handleChange}
-                value={formData.state}
-                name="state"
-                className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
-                required
-              >
-                <option value="">Select State</option>
-                {states.map((state, index) => (
-                  <option key={index} value={state}>
-                    {state}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <input
-              onChange={handleChange}
-              value={formData.email}
-              name="email"
-              type="email"
-              placeholder="Email"
-              className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
-              required
-            />
-            <select
-              onChange={handleWorkshopChange}
-              value={formData.WorkShopid}
-              name="Workshop"
-              className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
-              required
-            >
-              <option value="">Select Workshop</option>
-              {workshops.map((item) => (
-                <option key={item._id} value={item._id}>
-                  {item.WorkShopName}
-                </option>
-              ))}
-            </select>
-            <button type="submit" className="w-full py-2 mt-4 bg-primary rounded-lg text-white">
-              REGISTER
-            </button>
-          </form>
-        )}
-
-        {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
-
-        <div className="mt-6 text-center text-white">
-          <p>Or Claim Your Workshop Certificate:</p>
-          <button
-            className="w-full py-2 mt-4 bg-secondary rounded-lg text-white"
-            onClick={openPopup}
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-indigo-800 to-black flex items-center justify-center">
+      <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl p-8">
+        <h1 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
+          Register for Workshop
+        </h1>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <input
+            type="text"
+            name="FullName"
+            placeholder="Full Name"
+            value={formData.FullName}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 bg-gray-100 rounded-lg border border-gray-300 focus:ring-4 focus:ring-purple-500"
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 bg-gray-100 rounded-lg border border-gray-300 focus:ring-4 focus:ring-purple-500"
+          />
+          <input
+            type="text"
+            name="phone"
+            placeholder="Phone Number"
+            value={formData.phone}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 bg-white text-gray-900 font-medium rounded-lg border border-gray-300 focus:ring-4 focus:ring-indigo-500 focus:border-indigo-500 appearance-none shadow-lg hover:shadow-xl transition-shadow"
+          />
+          <select
+            name="state"
+            value={formData.state}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 bg-white text-gray-900 font-medium rounded-lg border border-gray-300 focus:ring-4 focus:ring-indigo-500 focus:border-indigo-500 appearance-none shadow-lg hover:shadow-xl transition-shadow"
           >
-            Claim Workshop Certificate
+            <option value="">Select State</option>
+            {states.map((state, index) => (
+              <option key={index} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
+          <select
+            name="Workshop"
+            value={formData.WorkShopid}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                Workshop: e.target.options[e.target.selectedIndex].text,
+                WorkShopid: e.target.value,
+              })
+            }
+            required
+            className="w-full px-4 py-3 bg-white text-gray-900 font-medium rounded-lg border border-gray-300 focus:ring-4 focus:ring-indigo-500 focus:border-indigo-500 appearance-none shadow-lg hover:shadow-xl transition-shadow"
+          >
+            <option value="">Select Workshop</option>
+            {workshops.map((workshop) => (
+              <option key={workshop._id} value={workshop._id}>
+                {workshop.WorkShopName}
+              </option>
+            ))}
+          </select>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-500 text-white rounded-lg hover:from-indigo-500 hover:to-purple-600"
+          >
+            {loading ? <ThreeDots height="20" width="20" color="#fff" /> : "Register"}
           </button>
-        </div>
-
-        <div className="mt-4 text-center">
-          <Link to="/">
-            <button className="w-full py-2 mt-4 bg-accent rounded-lg text-white">
-              GO BACK
-            </button>
-          </Link>
-        </div>
+        </form>
+        <button
+          onClick={() => setIsPopupOpen(true)}
+          className="w-full py-2 mt-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg"
+        >
+          Claim Certificate
+        </button>
       </div>
-      {isPopupOpen && <Popup onClose={closePopup} />}
+      {isPopupOpen && <Popup onClose={() => setIsPopupOpen(false)} />}
     </div>
   );
 };

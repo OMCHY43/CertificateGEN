@@ -154,16 +154,24 @@ if (!workshopDetails) {
   throw new ApiError(400, 'Workshop details not found');
 }
 
-const EventDate = workshopDetails.EventDate ? new Date(workshopDetails.EventDate).toLocaleDateString() : 'N/A';
-const EventEndDate = workshopDetails.EventEndDate ? new Date(workshopDetails.EventEndDate).toLocaleDateString() : 'N/A';
+const eventDate = workshopDetails.EventDate ? new Date(workshopDetails.EventDate).toLocaleDateString() : 'N/A';
+const eventEndDate = workshopDetails.EventEndDate ? new Date(workshopDetails.EventEndDate).toLocaleDateString() : 'N/A';
 const Type = workshopDetails.Type 
 const WorkShopName = workshopDetails.WorkShopName ;
+// finding days 
+const DateOfEvent = new Date(eventDate); // Replace with your event date
+const EndDateOfEvent = new Date(eventEndDate); // Replace with your event end date
 
+const differenceInMs = EndDateOfEvent - DateOfEvent;
+
+// Convert milliseconds to days
+const TotalDays = differenceInMs / (1000 * 60 * 60 * 24);
 
 // Now you can log or use the dates as needed
-console.log('Event Date:', EventDate);
-console.log('Event End Date:', EventEndDate);
+console.log('Event Date:', eventDate);
+console.log('Event End Date:', eventEndDate);
 console.log('Event Type:', Type);
+console.log('TotalDays :', TotalDays.toString());
 
 
 const existingPDFBytes = fs.readFileSync(existingPDFPath);
@@ -193,36 +201,47 @@ const pdfDoc = await PDFDocument.load(existingPDFBytes);
       font: font,
     });
 
-    // Draw Event on the PDF
-    firstPage.drawText(Type, {
-      x: 488,
-      y: 262,
-      size: 15,
-      color: rgb(0, 0, 0),
-      font: font,
-    });
     
     // Draw the event date on the PDF (you can adjust x, y coordinates as needed)
-    firstPage.drawText(`${EventDate}`, {
-      x: 230,
-      y: 239,
+    firstPage.drawText(`${eventDate}`, {
+      x: 291,
+      y: 215,
       size: 15,
       color: rgb(0, 0, 0),
       font: font,
     });
     
-    firstPage.drawText(`${EventEndDate}`, {
-      x: 350,
-      y: 239,
+    firstPage.drawText(`${eventEndDate}`, {
+      x: 410,
+      y: 215,
+      size: 15,
+      color: rgb(0, 0, 0),
+      font: font,
+    });
+    
+    
+    // WorkShop Name 
+    firstPage.drawText(`${WorkShopName}`, {
+      x: 550,
+      y: 262,
       size: 15,
       color: rgb(0, 0, 0),
       font: font,
     });
 
-    // WorkShop Name 
-    firstPage.drawText(`${WorkShopName}`, {
-      x: 575,
+    // DRAW THE DAYS 
+    firstPage.drawText(`${TotalDays.toString()} DAYS` , {
+      x: 503,
       y: 262,
+      size: 15,
+      color: rgb(0, 0, 0),
+      font: font,
+    })
+
+    // Draw Event on the PDF
+    firstPage.drawText(Type, {
+      x: 593,
+      y: 237,
       size: 15,
       color: rgb(0, 0, 0),
       font: font,
