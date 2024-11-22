@@ -222,8 +222,8 @@ const pdfDoc = await PDFDocument.load(existingPDFBytes);
     
     // WorkShop Name 
     firstPage.drawText(`${WorkShopName}`, {
-      x: 550,
-      y: 262,
+      x: 552,
+      y: 260,
       size: 15,
       color: rgb(0, 0, 0),
       font: font,
@@ -232,7 +232,7 @@ const pdfDoc = await PDFDocument.load(existingPDFBytes);
     // DRAW THE DAYS 
     firstPage.drawText(`${TotalDays.toString()} DAYS` , {
       x: 503,
-      y: 262,
+      y: 260,
       size: 15,
       color: rgb(0, 0, 0),
       font: font,
