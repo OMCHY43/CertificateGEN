@@ -14,8 +14,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<LandingPage />} />
-          <Route path="/Certificates" element={<Certificates />} />
+          
+          <Route path="/" element={<Certificates />} />
           <Route path="/VerifyedUser/:id" element={<Verifyed />} />
         </Route>
       </Routes>

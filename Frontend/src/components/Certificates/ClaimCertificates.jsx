@@ -17,7 +17,7 @@ const Popup = ({ onClose }) => {
 
     try {
       const response = await axios.post(
-        "/api/v1/users/ClaimCertificates",
+        "https://certificate-gen-c66k.onrender.com/api/v1/users/ClaimCertificates",
         { email, Workshop: selectedWorkshop, WorkShopid: workShopId },
         { responseType: "arraybuffer" }
       );
@@ -43,7 +43,7 @@ const Popup = ({ onClose }) => {
   useEffect(() => {
     async function fetchWorkshops() {
       try {
-        const response = await axios.get("/api/v1/admin/GetAllWorkShop");
+        const response = await axios.get("https://certificate-gen-c66k.onrender.com/api/v1/admin/GetAllWorkShop");
         setWorkshops(response.data.data || []);
       } catch (error) {
         setError("Failed to load workshops.");

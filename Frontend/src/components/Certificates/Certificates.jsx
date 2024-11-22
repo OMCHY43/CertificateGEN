@@ -23,7 +23,7 @@ const Certificates = () => {
     async function fetchWorkshops() {
       setLoading(true);
       try {
-        const response = await axios.get("/api/v1/admin/GetAllWorkShop");
+        const response = await axios.get("https://certificate-gen-c66k.onrender.com/api/v1/admin/GetAllWorkShop");
         setWorkshops(response.data.data || []);
       } catch (error) {
         setError("Failed to load workshops.");
@@ -45,7 +45,7 @@ const Certificates = () => {
     setError("");
 
     try {
-      const response = await axios.post("/api/v1/users/Register", formData);
+      const response = await axios.post("https://certificate-gen-c66k.onrender.com/api/v1/users/Register", formData);
       alert(response.data.message || "Registration successful!");
     } catch (error) {
       setError("Failed to register. Please try again.");
@@ -68,7 +68,7 @@ const Certificates = () => {
             value={formData.FullName}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 bg-gray-100 rounded-lg border border-gray-300 focus:ring-4 focus:ring-purple-500"
+            className="w-full px-4 py-3 bg-gray-100 text-gray-900 rounded-lg border border-gray-300 focus:ring-4 focus:ring-purple-500"
           />
           <input
             type="email"
@@ -77,7 +77,7 @@ const Certificates = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 bg-gray-100 rounded-lg border border-gray-300 focus:ring-4 focus:ring-purple-500"
+            className="w-full px-4 py-3 bg-gray-100 text-gray-900 rounded-lg border border-gray-300 focus:ring-4 focus:ring-purple-500"
           />
           <input
             type="text"

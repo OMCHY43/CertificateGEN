@@ -4,7 +4,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000', // your backend server URL
+        target: 'https://certificate-gen-c66k.onrender.com', // backend server URL
         changeOrigin: true,
       },
     },
