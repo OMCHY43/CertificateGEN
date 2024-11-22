@@ -204,7 +204,7 @@ const pdfDoc = await PDFDocument.load(existingPDFBytes);
     
     // Draw the event date on the PDF (you can adjust x, y coordinates as needed)
     firstPage.drawText(`${eventDate}`, {
-      x: 291,
+      x: 292,
       y: 215,
       size: 15,
       color: rgb(0, 0, 0),
@@ -222,7 +222,7 @@ const pdfDoc = await PDFDocument.load(existingPDFBytes);
     
     // WorkShop Name 
     firstPage.drawText(`${WorkShopName}`, {
-      x: 552,
+      x: 554,
       y: 260,
       size: 15,
       color: rgb(0, 0, 0),
