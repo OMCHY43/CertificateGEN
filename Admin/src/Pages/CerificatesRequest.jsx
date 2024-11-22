@@ -15,7 +15,7 @@ const CertificatesRequests = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get("/api/v1/users/AllRequest", {
+        const response = await axios.get("https://certificate-gen-c66k.onrender.com/api/v1/users/AllRequest", {
           withCredentials: true,
         });
 
@@ -36,7 +36,7 @@ const CertificatesRequests = () => {
 
   const handleApprove = async (id) => {
     try {
-      await axios.patch(`/api/v1/users/ApproveCertificateRequest/${id}`, {}, {
+      await axios.patch(`https://certificate-gen-c66k.onrender.com/api/v1/users/ApproveCertificateRequest/${id}`, {}, {
         withCredentials: true,
       });
       toast.success("User Approved");
@@ -47,7 +47,7 @@ const CertificatesRequests = () => {
 
   const handleDeny = async (id) => {
     try {
-      await axios.patch(`/api/v1/users/DenyCertificateRequest/${id}`, {}, {
+      await axios.patch(`https://certificate-gen-c66k.onrender.com/api/v1/users/DenyCertificateRequest/${id}`, {}, {
         withCredentials: true,
       });
       toast.error("User Denied");
@@ -58,7 +58,7 @@ const CertificatesRequests = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/api/v1/users/DeleteRequest/${id}`, {
+      await axios.delete(`https://certificate-gen-c66k.onrender.com/api/v1/users/DeleteRequest/${id}`, {
         withCredentials: true,
       });
       setData(data.filter((request) => request._id !== id));
@@ -70,7 +70,7 @@ const CertificatesRequests = () => {
 
   async function ApproveAll(){
     try {
-     const res = await axios.patch(`/api/v1/users/acceptAllreq`, {}, {
+     const res = await axios.patch(`https://certificate-gen-c66k.onrender.com/api/v1/users/acceptAllreq`, {}, {
         withCredentials: true,
       });
       if(res){
@@ -83,7 +83,7 @@ const CertificatesRequests = () => {
   
   async function DenyAll(){
     try {
-     const res = await axios.patch(`/api/v1/users/DeniedAllReq`, {}, {
+     const res = await axios.patch(`https://certificate-gen-c66k.onrender.com/api/v1/users/DeniedAllReq`, {}, {
         withCredentials: true,
       });
       if(res){
@@ -96,7 +96,7 @@ const CertificatesRequests = () => {
 
   async function DeleteAll(){
     try {
-      const res = await axios.delete(`/api/v1/users/DeleteAllReq`, {
+      const res = await axios.delete(`https://certificate-gen-c66k.onrender.com/api/v1/users/DeleteAllReq`, {
         withCredentials: true,
       });
       if(res){

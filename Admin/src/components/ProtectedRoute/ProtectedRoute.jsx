@@ -9,7 +9,7 @@ const ProtectedRoute = ({ children }) => {
     const verifyToken = async () => {
       try {
       
-        const response = await axios.get("/api/v1/Admin/CheckToken", {
+        const response = await axios.get("https://certificate-gen-c66k.onrender.com/api/v1/Admin/CheckToken", {
           withCredentials: true, 
         });
 

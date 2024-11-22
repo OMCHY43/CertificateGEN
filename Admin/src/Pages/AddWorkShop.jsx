@@ -21,7 +21,7 @@ const AddWorkShop = () => {
     const fetchWorkshops = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("/api/v1/admin/GetAllWorkShop", {
+        const response = await axios.get("https://certificate-gen-c66k.onrender.com/api/v1/admin/GetAllWorkShop", {
           withCredentials: true,
         });
         setWorkshops(response.data.data);
@@ -39,7 +39,7 @@ const AddWorkShop = () => {
 
   const OnOffForm = async (id, OnOffStatus) => {
     try {
-      const res = await axios.put(`/api/v1/admin/OnOffForm/${id}`, { OnOffStatus }, {
+      const res = await axios.put(`https://certificate-gen-c66k.onrender.com/api/v1/admin/OnOffForm/${id}`, { OnOffStatus }, {
         withCredentials: true
       });
       console.log(res);
@@ -65,7 +65,7 @@ const AddWorkShop = () => {
     try {
       if (editingWorkshop) {
         // Edit workshop
-        const response = await axios.put(`/api/v1/admin/UpdateWorkShop/${editingWorkshop._id}`, workshopData, {
+        const response = await axios.put(`https://certificate-gen-c66k.onrender.com/api/v1/admin/UpdateWorkShop/${editingWorkshop._id}`, workshopData, {
           withCredentials: true,
         });
         // Update the workshop in the list
@@ -76,7 +76,7 @@ const AddWorkShop = () => {
         setEditingWorkshop(null);
       } else {
         // Add new workshop
-        const response = await axios.post("/api/v1/admin/AddWorkShop", workshopData, {
+        const response = await axios.post("https://certificate-gen-c66k.onrender.com/api/v1/admin/AddWorkShop", workshopData, {
           withCredentials: true,
         });
         setWorkshops([...workshops, response.data.data]);
@@ -102,7 +102,7 @@ const AddWorkShop = () => {
   // Delete workshop
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/api/v1/admin/DeleteWorkShop/${id}`, {
+      await axios.delete(`https://certificate-gen-c66k.onrender.com/api/v1/admin/DeleteWorkShop/${id}`, {
         withCredentials: true,
       });
       setWorkshops(workshops.filter((ws) => ws._id !== id));
