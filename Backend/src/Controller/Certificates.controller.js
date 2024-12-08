@@ -120,7 +120,7 @@ const ClaimCertificates = asyncHandler(async (req, res) => {
       throw new ApiError(403, 'Certificate not approved')
     }
 
-    const verificationUrl = `https://certificategenfro.onrender.com/VerifyedUser/${user._id}`;
+    const verificationUrl = `https://certificate.byteminders.com/VerifyedUser/${user._id}`;
     const qrCodeImageUrl = await qrcode.toDataURL(verificationUrl);
 
     const __filename = fileURLToPath(import.meta.url);
